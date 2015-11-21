@@ -15,12 +15,9 @@ class TestKernel extends Kernel
             new Symfony\Bundle\MonologBundle\MonologBundle(),
             new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle(),
             new KleijnWeb\JwtBundle\KleijnWebJwtBundle(),
-            new KleijnWeb\JwtBundle\Tests\Functional\PetStore\PetStoreBundle()
+            new KleijnWeb\JwtBundle\Tests\Functional\App\TestBundle(),
+            new Symfony\Bundle\SecurityBundle\SecurityBundle()
         ];
-
-        if (0 === strpos($this->getEnvironment(), 'secured')) {
-            $bundles[] = new Symfony\Bundle\SecurityBundle\SecurityBundle();
-        }
 
         return $bundles;
     }
@@ -30,6 +27,6 @@ class TestKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__ . '/config_' . $this->getEnvironment() . '.yml');
+        $loader->load(__DIR__ . '/config.yml');
     }
 }

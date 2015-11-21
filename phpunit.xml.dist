@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./src/Tests/Functional/PetStore/app/autoload.php"
+<phpunit bootstrap="./src/Tests/Functional/App/app/autoload.php"
          colors="true"
          syntaxCheck="true">
     <testsuites>
@@ -23,6 +23,6 @@
     </filter>
 
     <php>
-        <server name="KERNEL_DIR" value="./src/Tests/Functional/PetStore/app"/>
+        <server name="KERNEL_DIR" value="./src/Tests/Functional/App/app"/>
     </php>
 </phpunit>

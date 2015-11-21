@@ -40,10 +40,10 @@ jwt:
 security:
     firewalls:
         secured_area:
-            pattern: ^/
+            pattern: ^/secured
             stateless: true
             simple_preauth:
-                authenticator: swagger.auth.authenticator.jwt
+                authenticator: jwt.authenticator
             provider: in_memory
 
     providers:

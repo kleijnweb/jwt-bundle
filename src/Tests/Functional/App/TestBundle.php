@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\Tests\Functional\PetStore;
+namespace KleijnWeb\JwtBundle\Tests\Functional\App;
 
 use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamDirectory;
@@ -17,7 +17,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class PetStoreBundle extends Bundle
+class TestBundle extends Bundle
 {
     /**
      * @return ExtensionInterface
@@ -48,7 +48,7 @@ class PetStoreBundle extends Bundle
             vfsStreamWrapper::register();
             vfsStreamWrapper::setRoot(new vfsStreamDirectory('root'));
 
-            $this->path = vfsStream::url('root/PetStoreBundle');
+            $this->path = vfsStream::url('root/App');
 
             if (!is_dir($this->path)) {
                 mkdir($this->path);

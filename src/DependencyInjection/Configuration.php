@@ -26,22 +26,19 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->addDefaultsIfNotSet()
-                ->children()
-                    ->arrayNode('keys')
-                        ->requiresAtLeastOneElement()
-                        ->useAttributeAsKey('name')
-                        ->prototype('array')
-                            ->children()
-                                ->scalarNode('issuer')->isRequired()->end()
-                                ->scalarNode('secret')->isRequired()->end()
-                                ->scalarNode('type')->defaultValue('HS256')->end()
-                            ->end()
+                ->arrayNode('keys')
+                    ->requiresAtLeastOneElement()
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children()
+                            ->scalarNode('issuer')->isRequired()->end()
+                            ->scalarNode('secret')->isRequired()->end()
+                            ->scalarNode('type')->defaultValue('HS256')->end()
                         ->end()
                     ->end()
                 ->end()
-
             ;
+
         return $treeBuilder;
     }
 }

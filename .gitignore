@@ -2,3 +2,5 @@
 vendor
 composer.lock
 phpunit.xml
+src/Tests/Functional/App/app/cache
+src/Tests/Functional/App/app/logs

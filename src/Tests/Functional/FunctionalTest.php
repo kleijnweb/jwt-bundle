@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class SecuredPetStoreApiTest extends WebTestCase
+class FunctionalTest extends WebTestCase
 {
     // @codingStandardsIgnoreStart
     const KEY_ONE_TOKEN = JwtAuthenticatorTest::TEST_TOKEN;
@@ -22,32 +22,13 @@ class SecuredPetStoreApiTest extends WebTestCase
     // @codingStandardsIgnoreEnd
 
     /**
-     * Use config_secured.yml
-     *
-     * @var bool
-     */
-    protected $env = 'secured';
-
-    /**
-     * TODO Temporary workaround
-     * @see https://github.com/kleijnweb/swagger-bundle/issues/16
-     *
-     * @var bool
-     */
-    protected $validateErrorResponse = false;
-
-    /**
      * @test
      */
-    public function canFindPetsByStatus()
+    public function canGetUnsecuredContentWithoutToken()
     {
-        $this->markTestIncomplete();
-        $this->defaultServerVars = [
-            'HTTP_AUTHORIZATION' => 'Bearer ' . self::KEY_ONE_TOKEN
-        ];
-        $params = ['status' => 'available'];
-
-        $this->get('/v2/pet/findByStatus', $params);
+        $client = $this->createClient();
+        $client->request('GET', '/unsecured');
+        $this->assertSame('UNSECURED CONTENT', $client->getResponse()->getContent());
     }
 
     /**

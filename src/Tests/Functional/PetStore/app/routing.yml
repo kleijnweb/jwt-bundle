@@ -1,4 +1,0 @@
-test:
-    resource: "src/Tests/Functional/PetStore/app/petstore.yml"
-    type: swagger
-    prefix: /v2

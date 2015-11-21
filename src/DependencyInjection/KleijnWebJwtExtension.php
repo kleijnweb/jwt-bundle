@@ -30,7 +30,7 @@ class KleijnWebJwtExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
-        $container->setParameter('swagger.auth.keys', $config['auth']['keys']);
+        $container->setParameter('jwt.keys', $config['keys']);
 
     }
 
@@ -39,6 +39,6 @@ class KleijnWebJwtExtension extends Extension
      */
     public function getAlias()
     {
-        return "swagger";
+        return "jwt";
     }
 }
