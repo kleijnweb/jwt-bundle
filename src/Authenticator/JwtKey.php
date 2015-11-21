@@ -6,11 +6,11 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\JwtAuthenticator;
+namespace KleijnWeb\JwtBundle\Authenticator;
 
-use KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\SignatureValidator;
-use KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\HmacValidator;
-use KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\RsaValidator;
+use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator;
+use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator;
+use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>

@@ -5,9 +5,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\JwtAuthenticator;
+namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
-use KleijnWeb\JwtBundle\JwtAuthenticator;
+use KleijnWeb\JwtBundle\Authenticator\Authenticator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\User\User;
@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\User;
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
+class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
     // @codingStandardsIgnoreStart
 
@@ -24,7 +24,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtleU9uZSJ9.eyJwcm4iOiJqb2huIiwiaXNzIjoiaHR0cDovL2FwaS5zZXJ2ZXIxLmNvbS9vYXV0aDIvdG9rZW4ifQ._jXjAWMzwwG1v5N3ZOEUoLGSINtmwLsvQdfYkYAcWiY';
 
-    const JKEY_CLASS = 'KleijnWeb\JwtBundle\JwtAuthenticator\JwtKey';
+    const JKEY_CLASS = 'KleijnWeb\JwtBundle\Authenticator\JwtKey';
     
     /**
      * @var array
@@ -51,7 +51,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function getGetKeysUsingIndexesInConfig()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById('keyOne'));
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById('keyTwo'));
@@ -65,7 +65,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $config = self::$keyConfig;
         unset($config['keyTwo']);
 
-        $authenticator = new JwtAuthenticator($config);
+        $authenticator = new Authenticator($config);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById(null));
     }
@@ -76,7 +76,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenTryingToGetKeyWithoutIdWhenThereAreMoreThanOne()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById(null));
     }
@@ -87,7 +87,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenTryingToGetUnknownKey()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById('blah'));
     }
@@ -98,7 +98,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenTryingToGetUserNameFromClaimsWithoutPrn()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
 
         $authenticator->getUsername([]);
     }
@@ -108,7 +108,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function canGetUserNameFromClaims()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
 
         $authenticator->getUsername(['prn' => 'johndoe']);
     }
@@ -119,7 +119,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
     public function authenticateTokenWillSetUserFetchedFromUserProviderOnToken()
     {
         $claims = ['prn' => 'john'];
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
         $anonToken = new PreAuthenticatedToken('foo', $claims, 'myprovider');
         $userProvider = $this->getMockBuilder(
             'Symfony\Component\Security\Core\User\UserProviderInterface'
@@ -137,7 +137,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function supportsPreAuthToken()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
 
         $securityToken = new PreAuthenticatedToken('foo', 'bar', 'myprovider');
         $actual = $authenticator->supportsToken($securityToken, 'myprovider');
@@ -150,7 +150,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenApiKeyNotFoundInHeader()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
         $request = new Request();
         $authenticator->createToken($request, 'myprovider');
     }
@@ -160,7 +160,7 @@ class JwtAuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function canGetAnonTokenWithClaims()
     {
-        $authenticator = new JwtAuthenticator(self::$keyConfig);
+        $authenticator = new Authenticator(self::$keyConfig);
         $request = new Request();
         $request->headers->set('Authorization', 'Bearer ' . self::TEST_TOKEN);
         $token = $authenticator->createToken($request, 'myprovider');

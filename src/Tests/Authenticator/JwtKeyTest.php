@@ -5,10 +5,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\JwtAuthenticator;
+namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
-use KleijnWeb\JwtBundle\JwtAuthenticator\JwtKey;
-use KleijnWeb\JwtBundle\JwtAuthenticator\JwtToken;
+use KleijnWeb\JwtBundle\Authenticator\JwtKey;
+use KleijnWeb\JwtBundle\Authenticator\JwtToken;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -44,7 +44,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     {
         $key = new JwtKey(['secret' => 'Buy the book']);
         $token = $this->getMockBuilder(
-            'KleijnWeb\JwtBundle\JwtAuthenticator\JwtToken'
+            'KleijnWeb\JwtBundle\Authenticator\JwtToken'
         )->disableOriginalConstructor()->getMock();
 
         $token->expects($this->once())
@@ -70,7 +70,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
         $key = new JwtKey(['secret' => 'Buy the book']);
         $actual = $key->getSignatureValidator();
         $this->assertInstanceOf(
-            'KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\HmacValidator',
+            'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator',
             $actual
         );
     }
@@ -83,7 +83,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
         $key = new JwtKey(['secret' => 'Buy the book', 'type' => JwtKey::TYPE_RSA]);
         $actual = $key->getSignatureValidator();
         $this->assertInstanceOf(
-            'KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\RsaValidator',
+            'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator',
             $actual
         );
     }

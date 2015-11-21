@@ -6,9 +6,9 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\JwtAuthenticator;
+namespace KleijnWeb\JwtBundle\Authenticator;
 
-use KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\SignatureValidator;
+use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>

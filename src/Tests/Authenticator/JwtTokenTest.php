@@ -5,9 +5,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\JwtAuthenticator;
+namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
-use KleijnWeb\JwtBundle\JwtAuthenticator\JwtToken;
+use KleijnWeb\JwtBundle\Authenticator\JwtToken;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -72,7 +72,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
     {
         $validator = $this
             ->getMockBuilder(
-                'KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\SignatureValidator'
+                'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator'
             )
             ->getMockForAbstractClass();
         $token = new JwtToken(self::EXAMPLE_TOKEN);
@@ -88,7 +88,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
     {
         $validator = $this
             ->getMockBuilder(
-                'KleijnWeb\JwtBundle\JwtAuthenticator\SignatureValidator\SignatureValidator'
+                'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator'
             )
             ->getMockForAbstractClass();
         $token = new JwtToken(self::EXAMPLE_TOKEN);
