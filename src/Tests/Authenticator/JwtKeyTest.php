@@ -8,7 +8,6 @@
 namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
 use KleijnWeb\JwtBundle\Authenticator\JwtKey;
-use KleijnWeb\JwtBundle\Authenticator\JwtToken;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>

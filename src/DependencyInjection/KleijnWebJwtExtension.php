@@ -8,11 +8,8 @@
 
 namespace KleijnWeb\JwtBundle\DependencyInjection;
 
-use KleijnWeb\JwtBundle\Request\ContentDecoder;
-use KleijnWeb\JwtBundle\Serializer\SerializationTypeResolver;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
