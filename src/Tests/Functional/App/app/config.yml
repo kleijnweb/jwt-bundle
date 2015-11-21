@@ -11,13 +11,6 @@ framework:
     profiler:
         collect: false
 
-monolog:
-    handlers:
-        stderr:
-            type:  stream
-            path:  php://stderr
-            level: notice
-
 jwt:
    keys:
       keyOne:

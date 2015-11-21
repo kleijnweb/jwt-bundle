@@ -12,8 +12,6 @@ class TestKernel extends Kernel
     {
         $bundles = [
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-            new Symfony\Bundle\MonologBundle\MonologBundle(),
-            new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle(),
             new KleijnWeb\JwtBundle\KleijnWebJwtBundle(),
             new KleijnWeb\JwtBundle\Tests\Functional\App\TestBundle(),
             new Symfony\Bundle\SecurityBundle\SecurityBundle()
