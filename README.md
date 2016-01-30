@@ -65,7 +65,7 @@ jwt:
       keyOne: # Must match 'kid'
         issuer: http://api.server1.com/oauth2/token
         secret: 'A Pre-Shared Key'
-        type: ~ # Defaults to HS256 (HMACSHA256). All options: HS256, HS512, RS256 and RS512
+        # type:  Defaults to HS256 (HMACSHA256). All options: HS256, HS512, RS256 and RS512
       keyTwo: # Must match 'kid'
         issuer: http://api.server2.com/oauth2/token
         type: RS256 # RSA SHA256, needed for asymmetric keys
