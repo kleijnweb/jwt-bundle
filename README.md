@@ -39,16 +39,14 @@ All other claims encountered are ignored. The JWT header is checked for `kid` (s
 `Authenticator` supports multiple keys, and allows all options to be configured per `kid` (key ID, which must be included in the JWT header when more than 1 key is configured):
 
 ```yml
-swagger:
-    auth: 
-       keys:
-          keyOne: # Only one key, 'kid' is optional (but must match when provided)
-            issuer: http://api.server.com/oauth2/token # OAuth2 example, but could be any string value
-            audience: ~ # NULL, accept any
-            minIssueTime: 1442132949 # Reject 'old' tokens, regardless of 'exp'
-            require: [nbf, exp, my-claim] # Mark claims as required
-            leeway: 5 # Allow 5 seconds of time de-synchronization between this server and api.server.com
-    
+jwt: 
+   keys:
+      keyOne: # Only one key, 'kid' is optional (but must match when provided)
+        issuer: http://api.server.com/oauth2/token # OAuth2 example, but could be any string value
+        audience: ~ # NULL, accept any
+        minIssueTime: 1442132949 # Reject 'old' tokens, regardless of 'exp'
+        require: [nbf, exp, my-claim] # Mark claims as required
+        leeway: 5 # Allow 5 seconds of time de-synchronization between this server and api.server.com
 ```
 
 Clients should pass the token using an `Authentication: Bearer` header, eg:
