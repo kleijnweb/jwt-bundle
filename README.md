@@ -4,7 +4,7 @@ Integrate OAuth 2.0 compatible JWT API tokens for authentication.
 
 Go to the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to find details about the latest release.
 
-__TIP:__ Works well with [KleijnWeb\SwaggerBundle](https://github.com/kleijnweb/swagger-bundle).
+For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger-bundle-example).
 
 ## Install And Configure
 
