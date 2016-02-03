@@ -6,6 +6,8 @@ Go to the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to fi
 
 For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger-bundle-example).
 
+*NOTE:* JwtBundle is compatible with PHP 5.4 and does not work with Symfony 3.0 (yet).   
+
 ## Install And Configure
 
 Install using composer (`composer require kleijnweb/jwt-bundle`). You want to check out the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to ensure you are getting what you want and optionally verify your download.
