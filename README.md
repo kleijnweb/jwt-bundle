@@ -1,4 +1,8 @@
-# KleijnWeb\JwtBundle [![Build Status](https://travis-ci.org/kleijnweb/jwt-bundle.svg?branch=master)](https://travis-ci.org/kleijnweb/jwt-bundle)
+# KleijnWeb\JwtBundle 
+[![Build Status](https://travis-ci.org/kleijnweb/jwt-bundle.svg?branch=master)](https://travis-ci.org/kleijnweb/jwt-bundle)
+[![Coverage Status](https://coveralls.io/repos/github/kleijnweb/jwt-bundle/badge.svg?branch=master)](https://coveralls.io/github/kleijnweb/jwt-bundle?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kleijnweb/jwt-bundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kleijnweb/jwt-bundle/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/kleijnweb/jwt-bundle/v/stable)](https://packagist.org/packages/kleijnweb/jwt-bundle)
 
 Integrate OAuth 2.0 compatible JWT API tokens for authentication.
 
