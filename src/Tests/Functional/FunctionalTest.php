@@ -10,6 +10,7 @@ namespace KleijnWeb\JwtBundle\Tests\Functional;
 
 use KleijnWeb\JwtBundle\Tests\Authenticator\AuthenticatorTest;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Bundle\FrameworkBundle\Client;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -27,9 +28,10 @@ class FunctionalTest extends WebTestCase
      */
     public function canGetUnsecuredContentWithoutToken()
     {
-        $client = $this->createClient();
-        $client->request('GET', '/unsecured');
-        $this->assertSame('UNSECURED CONTENT', $client->getResponse()->getContent());
+        $this->assertSame(
+            'UNSECURED CONTENT',
+            $this->makeRequest('/unsecured')
+        );
     }
 
     /**
@@ -38,8 +40,7 @@ class FunctionalTest extends WebTestCase
      */
     public function cannotGetSecuredContentWithoutToken()
     {
-        $client = $this->createClient();
-        $client->request('GET', '/secured');
+        $this->makeRequest('/secured');
     }
 
     /**
@@ -48,9 +49,7 @@ class FunctionalTest extends WebTestCase
      */
     public function cannotGetSecuredContentWitInvalidToken()
     {
-        $client = $this->createClient();
-        $server = ['HTTP_AUTHORIZATION' => 'Bearer foo'];
-        $client->request('GET', '/secured', $parameters = [], $files = [], $server);
+        $this->makeRequest('/secured', 'foo');
     }
 
     /**
@@ -58,10 +57,10 @@ class FunctionalTest extends WebTestCase
      */
     public function canGetSecuredContentWitValidPskToken()
     {
-        $client = $this->createClient();
-        $server = ['HTTP_AUTHORIZATION' => 'Bearer ' . self::PSK_TOKEN];
-        $client->request('GET', '/secured', $parameters = [], $files = [], $server);
-        $this->assertSame('SECURED CONTENT', $client->getResponse()->getContent());
+        $this->assertSame(
+            'SECURED CONTENT',
+            $this->makeRequest('/secured', self::PSK_TOKEN)
+        );
     }
 
     /**
@@ -69,10 +68,10 @@ class FunctionalTest extends WebTestCase
      */
     public function canGetSecuredContentWitValidHmacToken()
     {
-        $client = $this->createClient();
-        $server = ['HTTP_AUTHORIZATION' => 'Bearer ' . self::HMAC_TOKEN];
-        $client->request('GET', '/secured', $parameters = [], $files = [], $server);
-        $this->assertSame('SECURED CONTENT', $client->getResponse()->getContent());
+        $this->assertSame(
+            'SECURED CONTENT',
+            $this->makeRequest('/secured', self::HMAC_TOKEN)
+        );
     }
 
     /**
@@ -80,9 +79,27 @@ class FunctionalTest extends WebTestCase
      */
     public function canGetSecuredContentWithSecretLoader()
     {
+        $this->assertSame(
+            'CONTENT SECURED WITH SECRET LOADER',
+            $this->makeRequest('/secured-with-secret-loader', self::DYN_HMAC_TOKEN)
+        );
+    }
+
+    /**
+     * @param string $url
+     * @param string $token
+     *
+     * @return string
+     */
+    private function makeRequest($url, $token = null)
+    {
         $client = $this->createClient();
-        $server = ['HTTP_AUTHORIZATION' => 'Bearer ' . self::DYN_HMAC_TOKEN];
-        $client->request('GET', '/secured-with-secret-loader', $parameters = [], $files = [], $server);
-        $this->assertSame('CONTENT SECURED WITH SECRET LOADER', $client->getResponse()->getContent());
+        $server = [];
+        if ($token) {
+            $server = ['HTTP_AUTHORIZATION' => 'Bearer ' . $token];
+        }
+        $client->request('GET', $url, $parameters = [], $files = [], $server);
+
+        return $client->getResponse()->getContent();
     }
 }
