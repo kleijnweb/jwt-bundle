@@ -26,12 +26,12 @@ class Authenticator implements SimplePreAuthenticatorInterface
     private $keys = [];
 
     /**
-     * @param array $keyOptions
+     * @param JwtKey[] $keys
      */
-    public function __construct(array $keyOptions)
+    public function __construct(\ArrayObject $keys)
     {
-        foreach ($keyOptions as $name => $options) {
-            $this->keys[$name] = new JwtKey($options);
+        foreach ($keys as $key) {
+            $this->keys[$key->getId()] = $key;
         }
     }
 
@@ -92,7 +92,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
 
         try {
             $token = new JwtToken($tokenString);
-            $key = $this->getKeyById($token->getKeyId());
+            $key   = $this->getKeyById($token->getKeyId());
             $key->validateToken($token);
         } catch (\Exception $e) {
             throw new AuthenticationException('Invalid key', 0, $e);
@@ -111,7 +111,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
         $claims = $token->getCredentials();
-        $user = $userProvider->loadUserByUsername($this->getUsername($claims));
+        $user   = $userProvider->loadUserByUsername($this->getUsername($claims));
 
         return new PreAuthenticatedToken($user, $claims, $providerKey, $user->getRoles());
     }

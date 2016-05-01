@@ -8,6 +8,7 @@
 namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
 use KleijnWeb\JwtBundle\Authenticator\JwtKey;
+use KleijnWeb\JwtBundle\Authenticator\JwtToken;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -18,7 +19,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function constructionWillFailWhenSecretNotInOptions()
+    public function constructionWillFailWhenSecretNorLoaderPassed()
     {
         new JwtKey([]);
     }
@@ -26,11 +27,32 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function canOmitSecretWhenPassingLoader()
+    {
+        $actual   = new JwtKey(['loader' => 'foo']);
+        $refl     = new \ReflectionClass($actual);
+        $property = $refl->getProperty('secret');
+        $property->setAccessible(true);
+        $this->assertNull($property->getValue($actual));
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function cannotPassBothSecretAndLoader()
+    {
+        new JwtKey(['loader' => 'foo', 'secret' => 'bar']);
+    }
+
+    /**
+     * @test
+     */
     public function serializingWillClearSecret()
     {
-        $key = new JwtKey(['secret' => 'Buy the book']);
-        $actual = unserialize(serialize($key));
-        $refl = new \ReflectionClass($actual);
+        $key      = new JwtKey(['secret' => 'Buy the book']);
+        $actual   = unserialize(serialize($key));
+        $refl     = new \ReflectionClass($actual);
         $property = $refl->getProperty('secret');
         $property->setAccessible(true);
         $this->assertNull($property->getValue($actual));
@@ -41,22 +63,23 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validateTokenWillCallVerifySignatureOnToken()
     {
-        $key = new JwtKey(['secret' => 'Buy the book']);
-        $token = $this->getMockBuilder(
-            'KleijnWeb\JwtBundle\Authenticator\JwtToken'
-        )->disableOriginalConstructor()->getMock();
+        $secret = rand();
+        $key    = new JwtKey(['secret' => $secret]);
+        $key->validateToken($this->createTokenMock($secret, $key));
+    }
 
-        $token->expects($this->once())
-            ->method('validateSignature')
-            ->with('Buy the book', $key->getSignatureValidator());
+    /**
+     * @test
+     */
+    public function canLoadSecretFromLoader()
+    {
+        $secret = rand();
+        $token  = $this->createTokenMock($secret);
 
-        $token->expects($this->once())
-            ->method('getClaims')
-            ->willReturn(['prn' => 'john']);
+        $loaderMock = $this->getMockBuilder('KleijnWeb\JwtBundle\Authenticator\SecretLoader')->getMock();
+        $loaderMock->expects($this->once())->method('load')->with($token)->willReturn($secret);
 
-        $token->expects($this->once())
-            ->method('getHeader')
-            ->willReturn(['alg' => JwtKey::TYPE_HMAC, 'typ' => 'JWT']);
+        $key = new JwtKey(['loader' => $loaderMock]);
 
         $key->validateToken($token);
     }
@@ -66,7 +89,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function willGetRsaSignatureValidatorWhenTypeIsNotSpecified()
     {
-        $key = new JwtKey(['secret' => 'Buy the book']);
+        $key    = new JwtKey(['secret' => 'Buy the book']);
         $actual = $key->getSignatureValidator();
         $this->assertInstanceOf(
             'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator',
@@ -79,7 +102,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function willGetRsaSignatureValidatorWhenTypeIsRsa()
     {
-        $key = new JwtKey(['secret' => 'Buy the book', 'type' => JwtKey::TYPE_RSA]);
+        $key    = new JwtKey(['secret' => 'Buy the book', 'type' => JwtKey::TYPE_RSA]);
         $actual = $key->getSignatureValidator();
         $this->assertInstanceOf(
             'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator',
@@ -236,5 +259,33 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
             ['secret' => 'Buy the book']
         );
         $key->validateHeader(['typ' => 'Something']);
+    }
+
+    /**
+     * @param string      $secret
+     * @param JwtKey|null $key
+     *
+     * @return JwtToken
+     */
+    private function createTokenMock($secret, JwtKey $key = null)
+    {
+        /** @var JwtToken $token */
+        $token = $tokenMock = $this->getMockBuilder(
+            'KleijnWeb\JwtBundle\Authenticator\JwtToken'
+        )->disableOriginalConstructor()->getMock();
+
+        $tokenMock->expects($this->once())
+            ->method('validateSignature')
+            ->with($secret, $key ? $key->getSignatureValidator() : $this->anything());
+
+        $tokenMock->expects($this->once())
+            ->method('getClaims')
+            ->willReturn(['prn' => 'john']);
+
+        $tokenMock->expects($this->once())
+            ->method('getHeader')
+            ->willReturn(['alg' => JwtKey::TYPE_HMAC, 'typ' => 'JWT']);
+
+        return $token;
     }
 }
