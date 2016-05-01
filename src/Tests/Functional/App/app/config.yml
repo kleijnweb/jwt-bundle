@@ -29,6 +29,13 @@ jwt:
                 m6IDw3fRhZQrVwZ816/eN+1sqpIMZF4oo4kRA4b64U04ex67A/6BwDDQ3LH0mD4d
                 EwIDAQAB
                 -----END PUBLIC KEY-----
+      keyThree:
+        issuer: http://api.server2.com/oauth2/token
+        loader: test.secret.loader
+
+services:
+    test.secret.loader:
+        class: 'KleijnWeb\JwtBundle\Tests\Functional\App\Service\DummySecretLoader'
 
 security:
     firewalls:
@@ -45,6 +52,9 @@ security:
                 users:
                     john:
                         roles: 'IS_AUTHENTICATED_FULLY'
+                    joe:
+                        roles: 'ROLE_ADMIN'
 
     access_control:
+        - { path: ^/secured-with-secret-loader, roles: ROLE_ADMIN }
         - { path: ^/, roles: IS_AUTHENTICATED_FULLY }

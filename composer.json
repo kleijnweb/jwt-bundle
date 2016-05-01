@@ -9,7 +9,7 @@
     }
   ],
   "license": "LGPL-3.0",
-  "description": "Symfony JWT authentication with support for asymmetric keys",
+  "description": "Symfony JWT authentication with support for asymmetric keys and externally loaded secrets",
   "autoload": {
     "psr-4": {
       "KleijnWeb\\JwtBundle\\": "src"

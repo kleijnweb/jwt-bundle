@@ -17,23 +17,25 @@ use Symfony\Component\HttpFoundation\Response;
 class TestController
 {
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @param Request $request
-     *
      * @return Response
      */
-    public function secureAction(Request $request)
+    public function secureAction()
     {
         return new Response('SECURED CONTENT');
     }
 
     /**
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     * @param Request $request
-     *
      * @return Response
      */
-    public function unsecureAction(Request $request)
+    public function securedWithSecretLoaderAction()
+    {
+        return new Response('CONTENT SECURED WITH SECRET LOADER');
+    }
+
+    /**
+     * @return Response
+     */
+    public function unsecuredAction()
     {
         return new Response('UNSECURED CONTENT');
     }

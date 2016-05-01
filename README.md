@@ -90,10 +90,58 @@ jwt:
 
 To use *asymmetric keys*, `type` MUST be set to `RS256` or `RS512`. The secret in this case is the public key of the issuer.
 
+### Loading Secrets From An External Source
+
+Instead of configuring secrets statically, they can also be loaded dynamically, using any data available in the JWT token. Example configuration:
+
+```yml
+jwt:
+   keys:
+    keyThree: # Must match 'kid'
+      issuer: http://api.server1.com/oauth2/token
+      loader: 'my.loader.di.key'
+    
+```
+
+The loader must implement `KleijnWeb\JwtBundle\Authenticator\SecretLoader`. A simple example that loads the secret from an ambiguous data store:
+
+```php
+use KleijnWeb\JwtBundle\Authenticator\JwtToken;
+use KleijnWeb\JwtBundle\Authenticator\SecretLoader;
+
+class SimpleSecretLoader implements SecretLoader
+{
+    /**
+     * @var DataStore
+     */
+    private $store;
+
+    /**
+     * @param DataStore $store
+     */
+    public function __construct(DataStore $store)
+    {
+        $this->store = $store;
+    }
+
+    /**
+     * @param JwtToken $token
+     *
+     * @return string
+     */
+    public function load(JwtToken $token)
+    {
+        return $this->store->loadSecretByUsername($token->getClaims()['prn']);
+    }
+}
+```
+
+You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`. Be sure to throw an `AuthenticationException` when appropriate (eg missing claims needed for loading secret). 
+
 ### Integration Into Symfony Security
 
 When enabled, `Authenticator` will be used for any operations referencing a `SecurityDefinition` of type `apiKey` or `oath2`. You will need a *user provider*, which will be passed the
- 'prn' value when invoking `loadUserByUsername`. Trivial example using 'in memory':
+ `prn` value when invoking `loadUserByUsername`. Trivial example using 'in memory':
  
 ```yml
 security:

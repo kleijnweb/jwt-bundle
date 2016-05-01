@@ -61,12 +61,20 @@ class JwtKey
     private $secret;
 
     /**
+     * @var SecretLoader
+     */
+    private $secretLoader;
+
+    /**
      * @param array $options
      */
     public function __construct(array $options)
     {
-        if (!isset($options['secret'])) {
-            throw new \InvalidArgumentException("Need a secret to verify tokens");
+        if (!isset($options['secret']) && !isset($options['loader'])) {
+            throw new \InvalidArgumentException("Need a secret or a loader to verify tokens");
+        }
+        if (isset($options['secret']) && isset($options['loader'])) {
+            throw new \InvalidArgumentException("Cannot configure both secret and loader");
         }
         $defaults = [
             'kid'          => null,
@@ -77,15 +85,25 @@ class JwtKey
             'type'         => $this->type,
             'require'      => $this->requiredClaims,
         ];
-        $options = array_merge($defaults, $options);
-        $this->issuer = $options['issuer'];
-        $this->audience = $options['audience'];
-        $this->type = $options['type'];
-        $this->minIssueTime = $options['minIssueTime'];
-        $this->requiredClaims = $options['require'];
+
+        $options                = array_merge($defaults, $options);
+        $this->issuer           = $options['issuer'];
+        $this->audience         = $options['audience'];
+        $this->type             = $options['type'];
+        $this->minIssueTime     = $options['minIssueTime'];
+        $this->requiredClaims   = $options['require'];
         $this->issuerTimeLeeway = $options['leeway'];
-        $this->id = $options['kid'];
-        $this->secret = $options['secret'];
+        $this->id               = $options['kid'];
+        $this->secret           = isset($options['secret']) ? $options['secret'] : null;
+        $this->secretLoader     = isset($options['loader']) ? $options['loader'] : null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     /**
@@ -96,8 +114,13 @@ class JwtKey
     public function validateToken(JwtToken $token)
     {
         $this->validateHeader($token->getHeader());
-        $token->validateSignature($this->secret, $this->getSignatureValidator());
         $this->validateClaims($token->getClaims());
+
+        if (!$this->secretLoader) {
+            $token->validateSignature($this->secret, $this->getSignatureValidator());
+            return;
+        }
+        $token->validateSignature($this->secretLoader->load($token), $this->getSignatureValidator());
     }
 
     /**

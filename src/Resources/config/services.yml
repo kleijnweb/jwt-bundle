@@ -1,5 +1,4 @@
 services:
   jwt.authenticator:
       class:  KleijnWeb\JwtBundle\Authenticator\Authenticator
-      arguments: [%jwt.keys%]
       public: false

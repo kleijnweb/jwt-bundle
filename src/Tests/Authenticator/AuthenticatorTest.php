@@ -8,6 +8,7 @@
 namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
 use KleijnWeb\JwtBundle\Authenticator\Authenticator;
+use KleijnWeb\JwtBundle\Authenticator\JwtKey;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\User\User;
@@ -25,7 +26,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     const TEST_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtleU9uZSJ9.eyJwcm4iOiJqb2huIiwiaXNzIjoiaHR0cDovL2FwaS5zZXJ2ZXIxLmNvbS9vYXV0aDIvdG9rZW4ifQ._jXjAWMzwwG1v5N3ZOEUoLGSINtmwLsvQdfYkYAcWiY';
 
     const JKEY_CLASS = 'KleijnWeb\JwtBundle\Authenticator\JwtKey';
-    
+
     /**
      * @var array
      */
@@ -47,11 +48,24 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     // @codingStandardsIgnoreEnd
 
     /**
+     * @var JwtKey[]
+     */
+    private $keys = [];
+
+    protected function setUp()
+    {
+        foreach (self::$keyConfig as $keyId => $config) {
+            $config['kid']      = $keyId;
+            $this->keys[$keyId] = new JwtKey($config);
+        }
+    }
+
+    /**
      * @test
      */
     public function getGetKeysUsingIndexesInConfig()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
+        $authenticator = new Authenticator($this->keys);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById('keyOne'));
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById('keyTwo'));
@@ -62,7 +76,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willGetSingleKeyWhenKeyIdIsNull()
     {
-        $config = self::$keyConfig;
+        $config = $this->keys;
         unset($config['keyTwo']);
 
         $authenticator = new Authenticator($config);
@@ -76,7 +90,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenTryingToGetKeyWithoutIdWhenThereAreMoreThanOne()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
+        $authenticator = new Authenticator($this->keys);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById(null));
     }
@@ -87,7 +101,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenTryingToGetUnknownKey()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
+        $authenticator = new Authenticator($this->keys);
 
         $this->assertInstanceOf(self::JKEY_CLASS, $authenticator->getKeyById('blah'));
     }
@@ -98,7 +112,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenTryingToGetUserNameFromClaimsWithoutPrn()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
+        $authenticator = new Authenticator($this->keys);
 
         $authenticator->getUsername([]);
     }
@@ -108,7 +122,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function canGetUserNameFromClaims()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
+        $authenticator = new Authenticator($this->keys);
 
         $authenticator->getUsername(['prn' => 'johndoe']);
     }
@@ -118,10 +132,10 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function authenticateTokenWillSetUserFetchedFromUserProviderOnToken()
     {
-        $claims = ['prn' => 'john'];
-        $authenticator = new Authenticator(self::$keyConfig);
-        $anonToken = new PreAuthenticatedToken('foo', $claims, 'myprovider');
-        $userProvider = $this->getMockBuilder(
+        $claims        = ['prn' => 'john'];
+        $authenticator = new Authenticator($this->keys);
+        $anonToken     = new PreAuthenticatedToken('foo', $claims, 'myprovider');
+        $userProvider  = $this->getMockBuilder(
             'Symfony\Component\Security\Core\User\UserProviderInterface'
         )->getMockForAbstractClass();
 
@@ -137,10 +151,10 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function supportsPreAuthToken()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
+        $authenticator = new Authenticator($this->keys);
 
         $securityToken = new PreAuthenticatedToken('foo', 'bar', 'myprovider');
-        $actual = $authenticator->supportsToken($securityToken, 'myprovider');
+        $actual        = $authenticator->supportsToken($securityToken, 'myprovider');
         $this->assertTrue($actual);
     }
 
@@ -150,8 +164,8 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function willFailWhenApiKeyNotFoundInHeader()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
-        $request = new Request();
+        $authenticator = new Authenticator($this->keys);
+        $request       = new Request();
         $authenticator->createToken($request, 'myprovider');
     }
 
@@ -160,8 +174,8 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      */
     public function canGetAnonTokenWithClaims()
     {
-        $authenticator = new Authenticator(self::$keyConfig);
-        $request = new Request();
+        $authenticator = new Authenticator($this->keys);
+        $request       = new Request();
         $request->headers->set('Authorization', 'Bearer ' . self::TEST_TOKEN);
         $token = $authenticator->createToken($request, 'myprovider');
 

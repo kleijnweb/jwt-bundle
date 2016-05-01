@@ -10,8 +10,10 @@ namespace KleijnWeb\JwtBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -27,7 +29,22 @@ class KleijnWebJwtExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
-        $container->setParameter('jwt.keys', $config['keys']);
+        $keys = [];
+
+        foreach ($config['keys'] as $keyId => $keyConfig) {
+
+            $keyConfig['kid'] = $keyId;
+            $keyDefinition    = new Definition('jwt.keys.' . $keyId);
+            $keyDefinition->setClass('KleijnWeb\JwtBundle\Authenticator\JwtKey');
+
+            if (isset($keyConfig['loader'])) {
+                $keyConfig['loader'] = new Reference($keyConfig['loader']);
+            }
+            $keyDefinition->addArgument($keyConfig);
+            $keys[] = $keyDefinition;
+        }
+
+        $container->getDefinition('jwt.authenticator')->addArgument($keys);
 
     }
 
