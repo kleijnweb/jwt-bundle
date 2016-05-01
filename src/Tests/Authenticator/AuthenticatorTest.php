@@ -50,11 +50,10 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @var JwtKey[]
      */
-    private $keys;
+    private $keys = [];
 
     protected function setUp()
     {
-        $this->keys = new \ArrayObject;
         foreach (self::$keyConfig as $keyId => $config) {
             $config['kid']      = $keyId;
             $this->keys[$keyId] = new JwtKey($config);

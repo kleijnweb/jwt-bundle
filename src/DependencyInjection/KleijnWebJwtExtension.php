@@ -29,8 +29,7 @@ class KleijnWebJwtExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
 
-        $keysDefinition = new Definition('jwt.keys');
-        $keysDefinition->setClass('ArrayObject');
+        $keys = [];
 
         foreach ($config['keys'] as $keyId => $keyConfig) {
 
@@ -42,10 +41,10 @@ class KleijnWebJwtExtension extends Extension
                 $keyConfig['loader'] = new Reference($keyConfig['loader']);
             }
             $keyDefinition->addArgument($keyConfig);
-            $keysDefinition->addMethodCall('append', [$keyDefinition]);
+            $keys[] = $keyDefinition;
         }
 
-        $container->getDefinition('jwt.authenticator')->addArgument($keysDefinition);
+        $container->getDefinition('jwt.authenticator')->addArgument($keys);
 
     }
 

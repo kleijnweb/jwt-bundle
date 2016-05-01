@@ -28,7 +28,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
     /**
      * @param JwtKey[] $keys
      */
-    public function __construct(\ArrayObject $keys)
+    public function __construct(array $keys)
     {
         foreach ($keys as $key) {
             $this->keys[$key->getId()] = $key;

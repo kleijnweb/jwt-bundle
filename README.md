@@ -90,17 +90,16 @@ jwt:
 
 To use *asymmetric keys*, `type` MUST be set to `RS256` or `RS512`. The secret in this case is the public key of the issuer.
 
-### Loading Secrets From An External Resource
+### Loading Secrets From An External Source
 
 Instead of configuring secrets statically, they can also be loaded dynamically, using any data available in the JWT token. Example configuration:
 
 ```yml
 jwt:
    keys:
-    dynamicKeyName: # Must match 'kid'
+    keyThree: # Must match 'kid'
       issuer: http://api.server1.com/oauth2/token
       loader: 'my.loader.di.key'
-      # type:  Defaults to HS256 (HMACSHA256). All options: HS256, HS512, RS256 and RS512
     
 ```
 
