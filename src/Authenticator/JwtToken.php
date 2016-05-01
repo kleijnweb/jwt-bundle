@@ -65,14 +65,6 @@ class JwtToken
     }
 
     /**
-     * @return string|null
-     */
-    public function getPrn()
-    {
-        return isset($this->header['prn']) ? $this->header['prn'] : null;
-    }
-
-    /**
      * @param string             $secret
      * @param SignatureValidator $validator
      *

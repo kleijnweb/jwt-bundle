@@ -33,6 +33,17 @@ class TestController
      *
      * @return Response
      */
+    public function securedWithSecretLoaderAction(Request $request)
+    {
+        return new Response('CONTENT SECURED WITH SECRET LOADER');
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @param Request $request
+     *
+     * @return Response
+     */
     public function unsecureAction(Request $request)
     {
         return new Response('UNSECURED CONTENT');

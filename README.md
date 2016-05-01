@@ -132,12 +132,12 @@ class SimpleSecretLoader implements SecretLoader
      */
     public function load(JwtToken $token)
     {
-        return $this->store->loadSecretByUsername($token->getPrn());
+        return $this->store->loadSecretByUsername($token->getClaims()['prn']);
     }
 }
 ```
 
-You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`.
+You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`. Be sure to throw an `AuthenticationException` when appropriate (eg missing claims needed for loading secret). 
 
 ### Integration Into Symfony Security
 

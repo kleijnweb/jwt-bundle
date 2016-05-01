@@ -39,7 +39,7 @@ class KleijnWebJwtExtension extends Extension
             $keyDefinition->setClass('KleijnWeb\JwtBundle\Authenticator\JwtKey');
 
             if (isset($keyConfig['loader'])) {
-                $keyConfig['loader'] = $container->getDefinition($keyConfig['loader']);;
+                $keyConfig['loader'] = new Reference($keyConfig['loader']);
             }
             $keyDefinition->addArgument($keyConfig);
             $keysDefinition->addMethodCall('append', [$keyDefinition]);

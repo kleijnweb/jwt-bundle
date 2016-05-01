@@ -1,7 +1,11 @@
+unsecured:
+  path:      /unsecured
+  defaults:  { _controller: TestBundle:Test:unsecure }
+
 secured:
   path:      /secured
   defaults:  { _controller: TestBundle:Test:secure }
 
-unsecured:
-  path:      /unsecured
-  defaults:  { _controller: TestBundle:Test:unsecure }
+secured_with_secret_loader:
+  path:      /secured-with-secret-loader
+  defaults:  { _controller: TestBundle:Test:securedWithSecretLoader }
