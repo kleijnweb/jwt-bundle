@@ -36,10 +36,28 @@ class JwtToken
     private $signature;
 
     /**
+     * @var string
+     */
+    private $tokenString;
+
+    /**
+     * @param $tokenData
+     */
+    public function __construct($tokenData)
+    {
+        if (is_array($tokenData)) {
+            $this->setTokenFromParams($tokenData['header'], $tokenData['claims'], $tokenData['secret']);
+        } else {
+            $this->setTokenFromString($tokenData);
+        }
+    }
+
+    /**
      * @param string $tokenString
      */
-    public function __construct($tokenString)
+    public function setTokenFromString($tokenString)
     {
+        $this->tokenString = $tokenString;
         $segments = explode('.', $tokenString);
 
         if (count($segments) !== 3) {
@@ -54,6 +72,33 @@ class JwtToken
         $this->header = $decoder->decode($headerBase64);
         $this->claims = $decoder->decode($claimsBase64);
         $this->signature = $decoder->base64Decode($signatureBase64);
+    }
+
+    /**
+     * @param array $header
+     * @param array $claims
+     * @param       $secret
+     */
+    public function setTokenFromParams($header, $claims, $secret)
+    {
+        $this->header = $header;
+        $this->claims = $claims;
+
+        $encoder = new Encoder();
+        $headerBase64 = $encoder->encode($header);
+        $claimsBase64 = $encoder->encode($claims);
+
+        $this->payload = "{$headerBase64}.{$claimsBase64}";
+
+        $signatureBase64 = $this->signature = $encoder->base64Encode(hash_hmac(
+            'sha256',
+            $this->payload,
+            $secret,
+            true
+        ));
+
+        $segments = compact('headerBase64', 'claimsBase64', 'signatureBase64');
+        $this->tokenString = implode('.', $segments);
     }
 
     /**
@@ -91,5 +136,21 @@ class JwtToken
     public function getHeader()
     {
         return $this->header;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTokenString()
+    {
+        return $this->tokenString;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSignature()
+    {
+        return $this->signature;
     }
 }

@@ -44,6 +44,27 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
         ], $token->getHeader());
     }
 
+    /**
+     * @test
+     */
+    public function willDecodeWithArray()
+    {
+        $token = new JwtToken([
+            'header' => [
+                'alg' => 'HS256',
+                'typ' => 'JWT',
+            ],
+            'claims' => [
+                'sub'   => '1234567890',
+                'name'  => 'John Doe',
+                'admin' => true,
+            ],
+            'secret' => 'secret'
+        ]);
+
+        $this->assertSame(self::EXAMPLE_TOKEN, $token->getTokenString());
+    }
+
 
     /**
      * @test
