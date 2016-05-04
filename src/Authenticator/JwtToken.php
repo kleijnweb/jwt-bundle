@@ -145,12 +145,4 @@ class JwtToken
     {
         return $this->tokenString;
     }
-
-    /**
-     * @return string
-     */
-    public function getSignature()
-    {
-        return $this->signature;
-    }
 }
