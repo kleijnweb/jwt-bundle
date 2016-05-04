@@ -28,6 +28,16 @@ class EncoderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     * @expectedException \RuntimeException
+     */
+    public function willThrowExceptionWhenJsonDecodeFails()
+    {
+        $decoder = new Encoder();
+        $decoder->jsonEncode("\xB1\x31");
+    }
+
+    /**
      * @see          http://jwt.io/
      * @return array
      */
