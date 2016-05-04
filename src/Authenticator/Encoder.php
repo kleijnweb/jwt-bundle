@@ -55,7 +55,7 @@ class Encoder
     public function base64Encode($base64Decoded)
     {
         $base64Decoded = base64_encode($base64Decoded);
-        $base64Decoded = rtrim($base64Decoded, '=');
+        $base64Decoded = rtrim(strtr($base64Decoded, '-_', '+/'), '=');
 
         return $base64Decoded;
     }
