@@ -90,12 +90,13 @@ class JwtToken
 
         $this->payload = "{$headerBase64}.{$claimsBase64}";
 
-        $signatureBase64 = $this->signature = $encoder->base64Encode(hash_hmac(
+        $this->signature = hash_hmac(
             'sha256',
             $this->payload,
             $secret,
             true
-        ));
+        );
+        $signatureBase64 = $encoder->base64Encode($this->signature);
 
         $segments = compact('headerBase64', 'claimsBase64', 'signatureBase64');
         $this->tokenString = implode('.', $segments);
