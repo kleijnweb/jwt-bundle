@@ -160,7 +160,21 @@ security:
                     joe:
                         roles: 'IS_AUTHENTICATED_FULLY'
 ```
-   
+
+In some cases, you don't actually want to "load users" and just use the username. In this case, create a simple `UserProvider` that just creates a user object without fetching from any external source.
+
+```php
+class PreAuthenticatedUserProvider implements UserProviderInterface
+{
+    public function loadUserByUsername($username)
+    {
+       return new MyPreAuthenticatedUserClass($username);
+    }
+
+    //....
+}
+```
+
 ## License
 
 KleijnWeb\JwtBundle is made available under the terms of the [LGPL, version 3.0](https://spdx.org/licenses/LGPL-3.0.html#licenseText).
