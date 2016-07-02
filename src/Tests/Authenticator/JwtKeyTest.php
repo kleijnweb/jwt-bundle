@@ -162,9 +162,18 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException \InvalidArgumentException
      */
+    public function validationWillNotFailWhenExpiredByExpButWithinLeeway()
+    {
+        $key = new JwtKey(['secret' => 'Buy the book']);
+        $key->validateClaims(['sub' => 'john', 'exp' => time() - 2]);
+    }
+
+    /**
+     * @test
+     */
     public function validationWillFailWhenExpiredByIatAndMinIssueTime()
     {
-        $key = new JwtKey(['secret' => 'Buy the book', 'minIssueTime' => time() + 2]);
+        $key = new JwtKey(['secret' => 'Buy the book', 'minIssueTime' => time() + 2, 'leeway' => 3]);
         $key->validateClaims(['sub' => 'john', 'iat' => time()]);
     }
 
@@ -175,6 +184,15 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenNotValidYet()
     {
         $key = new JwtKey(['secret' => 'Buy the book']);
+        $key->validateClaims(['sub' => 'john', 'nbf' => time() + 2]);
+    }
+
+    /**
+     * @test
+     */
+    public function validationWillFailNotFailWhenNotValidYetButWithinLeeway()
+    {
+        $key = new JwtKey(['secret' => 'Buy the book', 'leeway' => 3]);
         $key->validateClaims(['sub' => 'john', 'nbf' => time() + 2]);
     }
 

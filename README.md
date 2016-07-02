@@ -53,7 +53,7 @@ jwt:
         audience: ~ # NULL, accept any
         minIssueTime: 1442132949 # Reject 'old' tokens, regardless of 'exp'
         require: [nbf, exp, my-claim] # Mark claims as required
-        leeway: 5 # Allow 5 seconds of time de-synchronization between this server and api.server.com
+        leeway: 5 # Allow 5 seconds of time de-synchronization (both ways) between this server and api.server.com
 ```
 
 Clients should pass the token using an `Authentication: Bearer` header, eg:
