@@ -32,6 +32,8 @@ jwt:
       keyThree:
         issuer: http://api.server2.com/oauth2/token
         loader: test.secret.loader
+      keyFour:
+        secret: 'A Pre-Shared Key'
 
 services:
     test.secret.loader:

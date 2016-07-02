@@ -31,7 +31,7 @@ class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('name')
                     ->prototype('array')
                         ->children()
-                            ->scalarNode('issuer')->isRequired()->end()
+                            ->scalarNode('issuer')->end()
                             ->scalarNode('secret')->end()
                             ->scalarNode('loader')->end()
                             ->scalarNode('type')->defaultValue('HS256')->end()
