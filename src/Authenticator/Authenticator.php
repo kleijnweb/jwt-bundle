@@ -57,22 +57,6 @@ class Authenticator implements SimplePreAuthenticatorInterface
     }
 
     /**
-     * @param array $claims
-     *
-     * @return string
-     */
-    public function getUsername(array $claims)
-    {
-        if (!isset($claims['prn'])) {
-            throw new AuthenticationException(
-                "Cannot extract username: missing principle claim"
-            );
-        }
-
-        return $claims['prn'];
-    }
-
-    /**
      * @param Request $request
      * @param string  $providerKey
      *
@@ -98,7 +82,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
             throw new AuthenticationException('Invalid key', 0, $e);
         }
 
-        return new PreAuthenticatedToken('anon.', $token->getClaims(), $providerKey);
+        return new PreAuthenticatedToken('anon.', $token, $providerKey);
     }
 
     /**
@@ -110,10 +94,14 @@ class Authenticator implements SimplePreAuthenticatorInterface
      */
     public function authenticateToken(TokenInterface $token, UserProviderInterface $userProvider, $providerKey)
     {
-        $claims = $token->getCredentials();
-        $user   = $userProvider->loadUserByUsername($this->getUsername($claims));
+        /** @var $jwtToken JwtToken */
+        if (!($jwtToken = $token->getCredentials()) instanceof JwtToken) {
+            throw new \UnexpectedValueException("Expected credentials to be a JwtToken object");
+        }
 
-        return new PreAuthenticatedToken($user, $claims, $providerKey, $user->getRoles());
+        $user = $userProvider->loadUserByUsername($jwtToken->getSubject());
+
+        return new PreAuthenticatedToken($user, $token, $providerKey, $user->getRoles());
     }
 
     /**

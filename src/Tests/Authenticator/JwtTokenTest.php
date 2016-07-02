@@ -46,6 +46,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @return JwtToken
      */
     public function willDecodeWithArray()
     {
@@ -63,6 +64,8 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $this->assertSame(self::EXAMPLE_TOKEN, $token->getTokenString());
+
+        return $token;
     }
 
 
@@ -84,6 +87,14 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('keyOne', $token->getKeyId());
     }
 
+    /**
+     * @test
+     */
+    public function canGetSubject()
+    {
+        $this->assertSame('1234567890', $this->willDecodeWithArray()->getSubject());
+    }
+
 
     /**
      * @test
@@ -96,6 +107,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
                 'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator'
             )
             ->getMockForAbstractClass();
+
         $token = new JwtToken(self::EXAMPLE_TOKEN);
         $validator->expects($this->once())->method('isValid')->willReturn(false);
         $token->validateSignature('foobar', $validator);
@@ -112,7 +124,9 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
                 'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator'
             )
             ->getMockForAbstractClass();
+
         $token = new JwtToken(self::EXAMPLE_TOKEN);
+
         $validator->expects($this->once())->method('isValid')->willReturn(true);
         $token->validateSignature('foobar', $validator);
     }

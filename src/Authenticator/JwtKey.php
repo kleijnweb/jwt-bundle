@@ -118,6 +118,7 @@ class JwtKey
 
         if (!$this->secretLoader) {
             $token->validateSignature($this->secret, $this->getSignatureValidator());
+
             return;
         }
         $token->validateSignature($this->secretLoader->load($token), $this->getSignatureValidator());
@@ -163,8 +164,8 @@ class JwtKey
         if ($this->audience && !isset($claims['aud'])) {
             throw new \InvalidArgumentException("Claim 'aud' is required");
         }
-        if (!isset($claims['prn']) || empty($claims['prn'])) {
-            throw new \InvalidArgumentException("Missing principle claim");
+        if ((!isset($claims['sub']) || empty($claims['sub'])) && (!isset($claims['prn']) || empty($claims['prn']))) {
+            throw new \InvalidArgumentException("Missing principle subject claim");
         }
         if (isset($claims['exp']) && $claims['exp'] < time()) {
             throw new \InvalidArgumentException("Token is expired by 'exp'");

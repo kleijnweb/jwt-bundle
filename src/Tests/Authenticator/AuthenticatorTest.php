@@ -9,6 +9,7 @@ namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
 use KleijnWeb\JwtBundle\Authenticator\Authenticator;
 use KleijnWeb\JwtBundle\Authenticator\JwtKey;
+use KleijnWeb\JwtBundle\Authenticator\JwtToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\User\User;
@@ -108,34 +109,14 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Symfony\Component\Security\Core\Exception\AuthenticationException
-     */
-    public function willFailWhenTryingToGetUserNameFromClaimsWithoutPrn()
-    {
-        $authenticator = new Authenticator($this->keys);
-
-        $authenticator->getUsername([]);
-    }
-
-    /**
-     * @test
-     */
-    public function canGetUserNameFromClaims()
-    {
-        $authenticator = new Authenticator($this->keys);
-
-        $authenticator->getUsername(['prn' => 'johndoe']);
-    }
-
-    /**
-     * @test
      */
     public function authenticateTokenWillSetUserFetchedFromUserProviderOnToken()
     {
-        $claims        = ['prn' => 'john'];
+        $jwtToken      = $this->createToken(['sub' => 'john']);
         $authenticator = new Authenticator($this->keys);
-        $anonToken     = new PreAuthenticatedToken('foo', $claims, 'myprovider');
-        $userProvider  = $this->getMockBuilder(
+        $anonToken     = new PreAuthenticatedToken('foo', $jwtToken, 'myprovider');
+
+        $userProvider = $this->getMockBuilder(
             'Symfony\Component\Security\Core\User\UserProviderInterface'
         )->getMockForAbstractClass();
 
@@ -143,6 +124,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->method('loadUserByUsername')
             ->with('john')
             ->willReturn(new User('john', 'hi there'));
+
         $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
     }
 
@@ -179,7 +161,25 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $request->headers->set('Authorization', 'Bearer ' . self::TEST_TOKEN);
         $token = $authenticator->createToken($request, 'myprovider');
 
-        $expected = ["prn" => "john", 'iss' => 'http://api.server1.com/oauth2/token'];
-        $this->assertSame($expected, $token->getCredentials());
+        $expected = new JwtToken(self::TEST_TOKEN);
+        $this->assertEquals($expected, $token->getCredentials());
+    }
+
+    /**
+     * @param array $claims
+     *
+     * @return JwtToken
+     */
+    private function createToken(array $claims)
+    {
+        return new JwtToken([
+            'header' => [
+                'alg' => 'HS256',
+                'typ' => 'JWT',
+                'kid' => 'keyOne'
+            ],
+            'claims' => $claims,
+            'secret' => 'secret'
+        ]);
     }
 }

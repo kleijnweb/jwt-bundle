@@ -58,7 +58,7 @@ class JwtToken
     public function setTokenFromString($tokenString)
     {
         $this->tokenString = $tokenString;
-        $segments = explode('.', $tokenString);
+        $segments          = explode('.', $tokenString);
 
         if (count($segments) !== 3) {
             throw new \InvalidArgumentException("Not a JWT token string");
@@ -68,9 +68,9 @@ class JwtToken
 
         $this->payload = "{$headerBase64}.{$claimsBase64}";
 
-        $decoder = new Decoder();
-        $this->header = $decoder->decode($headerBase64);
-        $this->claims = $decoder->decode($claimsBase64);
+        $decoder         = new Decoder();
+        $this->header    = $decoder->decode($headerBase64);
+        $this->claims    = $decoder->decode($claimsBase64);
         $this->signature = $decoder->base64Decode($signatureBase64);
     }
 
@@ -84,7 +84,7 @@ class JwtToken
         $this->header = $header;
         $this->claims = $claims;
 
-        $encoder = new Encoder();
+        $encoder      = new Encoder();
         $headerBase64 = $encoder->encode($header);
         $claimsBase64 = $encoder->encode($claims);
 
@@ -98,7 +98,7 @@ class JwtToken
         );
         $signatureBase64 = $encoder->base64Encode($this->signature);
 
-        $segments = compact('headerBase64', 'claimsBase64', 'signatureBase64');
+        $segments          = compact('headerBase64', 'claimsBase64', 'signatureBase64');
         $this->tokenString = implode('.', $segments);
     }
 
@@ -126,6 +126,18 @@ class JwtToken
     /**
      * @return array
      */
+    public function getSubject()
+    {
+        if (isset($this->claims['sub'])) {
+            return $this->claims['sub'];
+        }
+
+        return $this->claims['prn'];
+    }
+
+    /**
+     * @return array
+     */
     public function getClaims()
     {
         return $this->claims;
@@ -146,4 +158,6 @@ class JwtToken
     {
         return $this->tokenString;
     }
+
+
 }
