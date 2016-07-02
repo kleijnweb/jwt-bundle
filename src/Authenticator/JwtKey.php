@@ -170,10 +170,10 @@ class JwtKey
         if (isset($claims['exp']) && $claims['exp'] < time()) {
             throw new \InvalidArgumentException("Token is expired by 'exp'");
         }
-        if (isset($claims['iat']) && $claims['iat'] < $this->minIssueTime) {
+        if (isset($claims['iat']) && $claims['iat'] < ($this->minIssueTime - $this->issuerTimeLeeway)) {
             throw new \InvalidArgumentException("Server deemed your token too old");
         }
-        if (isset($claims['nbf']) && $claims['nbf'] > time()) {
+        if (isset($claims['nbf']) && ($claims['nbf'] - $this->issuerTimeLeeway) > time()) {
             throw new \InvalidArgumentException("Token not valid yet");
         }
         if (isset($claims['iss']) && $claims['iss'] !== $this->issuer) {
