@@ -130,6 +130,22 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \UnexpectedValueException
+     */
+    public function authenticateTokenWillFailIfCredentialsAreNotJwtToken()
+    {
+        $authenticator = new Authenticator($this->keys);
+        $anonToken     = new PreAuthenticatedToken('foo', ['sub' => 'john'], 'myprovider');
+
+        $userProvider = $this->getMockBuilder(
+            'Symfony\Component\Security\Core\User\UserProviderInterface'
+        )->getMockForAbstractClass();
+
+        $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
+    }
+
+    /**
+     * @test
      */
     public function supportsPreAuthToken()
     {
