@@ -112,12 +112,40 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function validationWillFailWhenPrincipleIsMissing()
     {
+        $claims = ['prn' => 'joe'];
+
         $key = new JwtKey(['secret' => 'Buy the book']);
-        $key->validateClaims([]);
+        $key->validateClaims($claims);
+
+        unset($claims['prn']);
+
+        $this->setExpectedException('\InvalidArgumentException');
+
+        $key = new JwtKey(['secret' => 'Buy the book']);
+        $key->validateClaims($claims);
+    }
+
+
+
+    /**
+     * @test
+     */
+    public function validationWillFailWhenSubjectMissing()
+    {
+        $claims = ['sub' => 'joe'];
+
+        $key = new JwtKey(['secret' => 'Buy the book']);
+        $key->validateClaims($claims);
+
+        unset($claims['sub']);
+
+        $this->setExpectedException('\InvalidArgumentException');
+
+        $key = new JwtKey(['secret' => 'Buy the book']);
+        $key->validateClaims($claims);
     }
 
     /**
@@ -127,7 +155,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenExpiredByExp()
     {
         $key = new JwtKey(['secret' => 'Buy the book']);
-        $key->validateClaims(['prn' => 'john', 'exp' => time() - 2]);
+        $key->validateClaims(['sub' => 'john', 'exp' => time() - 2]);
     }
 
     /**
@@ -137,7 +165,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenExpiredByIatAndMinIssueTime()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'minIssueTime' => time() + 2]);
-        $key->validateClaims(['prn' => 'john', 'iat' => time()]);
+        $key->validateClaims(['sub' => 'john', 'iat' => time()]);
     }
 
     /**
@@ -147,7 +175,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenNotValidYet()
     {
         $key = new JwtKey(['secret' => 'Buy the book']);
-        $key->validateClaims(['prn' => 'john', 'nbf' => time() + 2]);
+        $key->validateClaims(['sub' => 'john', 'nbf' => time() + 2]);
     }
 
     /**
@@ -157,7 +185,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenIssuerDoesNotMatch()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'issuer' => 'me']);
-        $key->validateClaims(['prn' => 'john', 'iss' => 'you']);
+        $key->validateClaims(['sub' => 'john', 'iss' => 'you']);
     }
 
     /**
@@ -167,7 +195,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenAudienceDoesNotMatch()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'audience' => 'me']);
-        $key->validateClaims(['prn' => 'john', 'aud' => 'the neighbours']);
+        $key->validateClaims(['sub' => 'john', 'aud' => 'the neighbours']);
     }
 
 
@@ -178,7 +206,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenIssuerIsConfiguredAndNotInClaims()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'issuer' => 'me']);
-        $key->validateClaims(['prn' => 'john']);
+        $key->validateClaims(['sub' => 'john']);
     }
 
     /**
@@ -188,7 +216,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenMinIssueTimeIsConfiguredAndIatNotInClaims()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'minIssueTime' => time()]);
-        $key->validateClaims(['prn' => 'john']);
+        $key->validateClaims(['sub' => 'john']);
     }
 
     /**
@@ -198,7 +226,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     public function validationWillFailWhenAudienceIsConfiguredAndNotInClaims()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'audience' => time()]);
-        $key->validateClaims(['prn' => 'john']);
+        $key->validateClaims(['sub' => 'john']);
     }
 
     /**
@@ -210,7 +238,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
         $key = new JwtKey(
             ['secret' => 'Buy the book', 'require' => ['jti', 'typ', 'and now for something completely different']]
         );
-        $key->validateClaims(['prn' => 'john']);
+        $key->validateClaims(['sub' => 'john']);
     }
 
     /**
@@ -280,7 +308,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
         $tokenMock->expects($this->once())
             ->method('getClaims')
-            ->willReturn(['prn' => 'john']);
+            ->willReturn(['sub' => 'john']);
 
         $tokenMock->expects($this->once())
             ->method('getHeader')

@@ -30,7 +30,8 @@ The token is validated using standard (reserved) JWT claims:
 | `iat` | int [1] | The time the token was issued, must be omitted [3] or smaller than configured `minIssueTime + leeway`. Required when `minIssueTime` configured.  |
 | `iss` | string | Issuer of the token, must match configured `issuer`. Required when `issuer` configured. |
 | `aud` | string | JWT "audience", must be omitted [3] or match configured `audience` if configured. Required when `audience` configured. |
-| `prn` | string | JWT "principal". Used as `username` for Symfony Security integration. Always required, without it the "Resource Owner cannot be identified. |
+| `sub` | string | JWT "subject". Used as `username` for Symfony Security integration. Always required (or its alias), without it the "Resource Owner cannot be identified. |
+| `prn` | string | JWT "principle". Deprecated alias for `sub`, used in older versions of the JWT RFC. |
 | `jti` | string | JWT "ID". Not used, will be ignored. |
 | `typ` | string | Not used, will be ignored. |
  
@@ -131,7 +132,7 @@ class SimpleSecretLoader implements SecretLoader
      */
     public function load(JwtToken $token)
     {
-        return $this->store->loadSecretByUsername($token->getClaims()['prn']);
+        return $this->store->loadSecretByUsername($token->getClaims()['sub']);
     }
 }
 ```
@@ -141,7 +142,7 @@ You could use any information available in the token, such as the `kid`, `alg` o
 ### Integration Into Symfony Security
 
 When enabled, `Authenticator` will be used for any operations referencing a `SecurityDefinition` of type `apiKey` or `oath2`. You will need a *user provider*, which will be passed the
- `prn` value when invoking `loadUserByUsername`. Trivial example using 'in memory':
+ `sub` value when invoking `loadUserByUsername`. Trivial example using 'in memory':
  
 ```yml
 security:
