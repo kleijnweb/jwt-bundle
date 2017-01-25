@@ -179,7 +179,12 @@ class JwtKey
         if (isset($claims['iss']) && $claims['iss'] !== $this->issuer) {
             throw new \InvalidArgumentException("Issuer mismatch");
         }
-        if (isset($claims['aud']) && !in_array($claims['aud'], $this->audience)) {
+        if (isset($claims['aud']) &&
+            (
+                (is_array($this->audience) && !in_array($claims['aud'], $this->audience))
+                || (!is_array($this->audience) && $claims['aud'] !== $this->audience)
+            )
+        ) {
             throw new \InvalidArgumentException("Audience mismatch");
         }
     }

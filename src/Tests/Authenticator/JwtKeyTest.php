@@ -221,7 +221,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validationWillFailWhenAudienceDoesNotMatch()
     {
-        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => ['me']]);
+        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => 'me']);
         $key->validateClaims(['sub' => 'john', 'aud' => 'the neighbours']);
     }
 
@@ -252,7 +252,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validationWillFailWhenAudienceIsConfiguredAndNotInClaims()
     {
-        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => [time()]]);
+        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => time()]);
         $key->validateClaims(['sub' => 'john']);
     }
 
