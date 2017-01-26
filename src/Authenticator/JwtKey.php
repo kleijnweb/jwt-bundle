@@ -36,9 +36,9 @@ class JwtKey
     private $type = self::TYPE_HMAC;
 
     /**
-     * @var string
+     * @var array
      */
-    private $audience;
+    private $audience = [];
 
     /**
      * @var int
@@ -79,7 +79,7 @@ class JwtKey
         $defaults = [
             'kid'          => null,
             'issuer'       => null,
-            'audience'     => null,
+            'audience'     => [],
             'minIssueTime' => null,
             'leeway'       => 0,
             'type'         => $this->type,
@@ -161,7 +161,7 @@ class JwtKey
         if ($this->minIssueTime && !isset($claims['iat'])) {
             throw new \InvalidArgumentException("Claim 'iat' is required");
         }
-        if ($this->audience && !isset($claims['aud'])) {
+        if (!empty($this->audience) && !isset($claims['aud'])) {
             throw new \InvalidArgumentException("Claim 'aud' is required");
         }
         if ((!isset($claims['sub']) || empty($claims['sub'])) && (!isset($claims['prn']) || empty($claims['prn']))) {
@@ -179,7 +179,12 @@ class JwtKey
         if (isset($claims['iss']) && $claims['iss'] !== $this->issuer) {
             throw new \InvalidArgumentException("Issuer mismatch");
         }
-        if (isset($claims['aud']) && $claims['aud'] !== $this->audience) {
+        if (isset($claims['aud']) &&
+            (
+                (is_array($this->audience) && !in_array($claims['aud'], $this->audience))
+                || (!is_array($this->audience) && $claims['aud'] !== $this->audience)
+            )
+        ) {
             throw new \InvalidArgumentException("Audience mismatch");
         }
     }

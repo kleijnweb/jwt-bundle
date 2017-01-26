@@ -71,6 +71,15 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function willValidateIfAudienceIsConfiguredAndMatchedAny()
+    {
+        $key = new JwtKey(['secret'=> 'Buy the book', 'audience' => ['author', 'reader']]);
+        $key->validateClaims(['sub' => 'john', 'aud' => 'reader']);
+    }
+
+    /**
+     * @test
+     */
     public function canLoadSecretFromLoader()
     {
         $secret = rand();
