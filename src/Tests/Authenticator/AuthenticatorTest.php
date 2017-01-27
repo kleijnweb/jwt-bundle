@@ -13,6 +13,7 @@ use KleijnWeb\JwtBundle\Authenticator\JwtToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\User\User;
+use KleijnWeb\JwtBundle\Tests\Classes\User as RoleAssignanleUser;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -179,6 +180,51 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 
         $expected = new JwtToken(self::TEST_TOKEN);
         $this->assertEquals($expected, $token->getCredentials());
+    }
+
+    /**
+     * @test
+     */
+    public function willAddRolesFromAudienceClaimsInToken()
+    {
+        $authenticator = new Authenticator($this->keys);
+        $token         = $this->createToken(['aud' => 'guests']);
+        $user          = new RoleAssignanleUser('john', 'hi there');
+        $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
+
+        $result = $authenticator->setUserRolesFromAudienceClaims($user, $token);
+
+        $this->assertEquals(['guests'], $result->getRoles());
+    }
+
+    /**
+     * @test
+     */
+    public function willAddMultipleRolesFromAudienceClaimsInToken()
+    {
+        $authenticator = new Authenticator($this->keys);
+        $token         = $this->createToken(['aud' => ['guests', 'users']]);
+        $user          = new RoleAssignanleUser('john', 'hi there');
+        $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
+
+        $result = $authenticator->setUserRolesFromAudienceClaims($user, $token);
+
+        $this->assertEquals(['guests','users'], $result->getRoles());
+    }
+
+    /**
+     * @test
+     */
+    public function willNotAssignRolesIfUserClassHasNoAddRoleMethod()
+    {
+        $authenticator = new Authenticator($this->keys);
+        $token         = $this->createToken(['aud' => 'guests']);
+        $user          = new User('john', 'hi there');
+        $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
+
+        $result = $authenticator->setUserRolesFromAudienceClaims($user, $token);
+
+        $this->assertEquals([], $result->getRoles());
     }
 
     /**
