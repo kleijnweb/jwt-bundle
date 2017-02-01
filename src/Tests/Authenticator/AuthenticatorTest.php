@@ -238,7 +238,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
             ->method('addRole');
 
         $user->expects($this->once())
-            ->method('getRoles')git 
+            ->method('getRoles')
             ->willReturn(['guests', 'users']);
 
         $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
