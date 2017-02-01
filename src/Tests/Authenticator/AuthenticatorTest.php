@@ -188,36 +188,60 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     public function willAddRolesFromAudienceClaimsInToken()
     {
         $authenticator = new Authenticator($this->keys);
-        $token         = $this->createToken(['aud' => 'guests']);
+        $token         = $this->createToken(['sub' => 'john', 'aud' => 'guests']);
+        $anonToken     = new PreAuthenticatedToken('foo', $token, 'myprovider');
+
         $user          = $this->getMockBuilder(
             'KleijnWeb\JwtBundle\User\UserInterface'
         )->getMockForAbstractClass();
-        $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
+
+        $userProvider = $this->getMockBuilder(
+            'Symfony\Component\Security\Core\User\UserProviderInterface'
+        )->getMockForAbstractClass();
+
+        $userProvider->expects($this->once())
+            ->method('loadUserByUsername')
+            ->willReturn($user);
 
         $user->expects($this->once())
             ->method('addRole')
             ->with('guests');
 
-        $authenticator->setUserRolesFromAudienceClaims($user, $token);
+        $user->expects($this->once())
+            ->method('getRoles')
+            ->willReturn(['guests']);
+
+        $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
     }
 
     /**
      * @test
      */
     public function willAddMultipleRolesFromAudienceClaimsInToken()
-    {
-        $authenticator = new Authenticator($this->keys);
-        $token         = $this->createToken(['aud' => ['guests', 'users']]);
+    {$authenticator = new Authenticator($this->keys);
+        $token         = $this->createToken(['sub' => 'john', 'aud' => ['guests', 'users' ]]);
+        $anonToken     = new PreAuthenticatedToken('foo', $token, 'myprovider');
+
         $user          = $this->getMockBuilder(
             'KleijnWeb\JwtBundle\User\UserInterface'
         )->getMockForAbstractClass();
 
-        $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
+        $userProvider = $this->getMockBuilder(
+            'Symfony\Component\Security\Core\User\UserProviderInterface'
+        )->getMockForAbstractClass();
+
+        $userProvider->expects($this->once())
+            ->method('loadUserByUsername')
+            ->willReturn($user);
 
         $user->expects($this->exactly(2))
             ->method('addRole');
 
-        $authenticator->setUserRolesFromAudienceClaims($user, $token);
+        $user->expects($this->once())
+            ->method('getRoles')git 
+            ->willReturn(['guests', 'users']);
+
+        $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
     }
 
     /**
