@@ -218,8 +218,9 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
      * @test
      */
     public function willAddMultipleRolesFromAudienceClaimsInToken()
-    {$authenticator = new Authenticator($this->keys);
-        $token         = $this->createToken(['sub' => 'john', 'aud' => ['guests', 'users' ]]);
+    {
+        $authenticator = new Authenticator($this->keys);
+        $token         = $this->createToken(['sub' => 'john', 'aud' => ['guests', 'users']]);
         $anonToken     = new PreAuthenticatedToken('foo', $token, 'myprovider');
 
         $user          = $this->getMockBuilder(

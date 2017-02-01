@@ -102,7 +102,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
 
         $user = $userProvider->loadUserByUsername($jwtToken->getSubject());
 
-        if($user instanceof UserInterface) {
+        if ($user instanceof UserInterface) {
             $user = $this->setUserRolesFromAudienceClaims($user, $token);
         }
 
@@ -131,14 +131,13 @@ class Authenticator implements SimplePreAuthenticatorInterface
         /** @var JwtToken $credentials */
         $credentials = $token->getCredentials();
 
-        foreach($credentials->getClaims() as $claimKey => $claimValue)
-        {
-            if($claimKey === 'aud') {
-                if(is_array($claimValue)) {
-                    foreach($claimValue as $role) {
+        foreach ($credentials->getClaims() as $claimKey => $claimValue) {
+            if ($claimKey === 'aud') {
+                if (is_array($claimValue)) {
+                    foreach ($claimValue as $role) {
                         $user->addRole($role);
                     }
-                } elseif(is_string($claimValue)) {
+                } elseif (is_string($claimValue)) {
                     $user->addRole($claimValue);
                 }
             }
