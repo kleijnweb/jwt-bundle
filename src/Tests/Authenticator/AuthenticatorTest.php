@@ -10,10 +10,10 @@ namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 use KleijnWeb\JwtBundle\Authenticator\Authenticator;
 use KleijnWeb\JwtBundle\Authenticator\JwtKey;
 use KleijnWeb\JwtBundle\Authenticator\JwtToken;
+use KleijnWeb\JwtBundle\User\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\User\User;
-use KleijnWeb\JwtBundle\Tests\Classes\User as RoleAssignanleUser;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -189,12 +189,16 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $authenticator = new Authenticator($this->keys);
         $token         = $this->createToken(['aud' => 'guests']);
-        $user          = new RoleAssignanleUser('john', 'hi there');
+        $user          = $this->getMockBuilder(
+            UserInterface::class
+        )->getMockForAbstractClass();
         $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
 
-        $result = $authenticator->setUserRolesFromAudienceClaims($user, $token);
+        $user->expects($this->once())
+            ->method('addRole')
+            ->with('guests');
 
-        $this->assertEquals(['guests'], $result->getRoles());
+        $authenticator->setUserRolesFromAudienceClaims($user, $token);
     }
 
     /**
@@ -204,27 +208,16 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     {
         $authenticator = new Authenticator($this->keys);
         $token         = $this->createToken(['aud' => ['guests', 'users']]);
-        $user          = new RoleAssignanleUser('john', 'hi there');
+        $user          = $this->getMockBuilder(
+            UserInterface::class
+        )->getMockForAbstractClass();
+
         $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
 
-        $result = $authenticator->setUserRolesFromAudienceClaims($user, $token);
+        $user->expects($this->exactly(2))
+            ->method('addRole');
 
-        $this->assertEquals(['guests','users'], $result->getRoles());
-    }
-
-    /**
-     * @test
-     */
-    public function willNotAssignRolesIfUserClassHasNoAddRoleMethod()
-    {
-        $authenticator = new Authenticator($this->keys);
-        $token         = $this->createToken(['aud' => 'guests']);
-        $user          = new User('john', 'hi there');
-        $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
-
-        $result = $authenticator->setUserRolesFromAudienceClaims($user, $token);
-
-        $this->assertEquals([], $result->getRoles());
+        $authenticator->setUserRolesFromAudienceClaims($user, $token);
     }
 
     /**

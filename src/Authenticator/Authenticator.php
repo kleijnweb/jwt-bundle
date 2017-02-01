@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Security\Core\User\UserInterface;
+use KleijnWeb\JwtBundle\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
@@ -102,7 +102,9 @@ class Authenticator implements SimplePreAuthenticatorInterface
 
         $user = $userProvider->loadUserByUsername($jwtToken->getSubject());
 
-        $user = $this->setUserRolesFromAudienceClaims($user, $token);
+        if($user instanceof UserInterface) {
+            $user = $this->setUserRolesFromAudienceClaims($user, $token);
+        }
 
         return new PreAuthenticatedToken($user, $token, $providerKey, $user->getRoles());
     }
@@ -131,7 +133,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
 
         foreach($credentials->getClaims() as $claimKey => $claimValue)
         {
-            if($claimKey === 'aud' && method_exists($user, 'addRole')) {
+            if($claimKey === 'aud') {
                 if(is_array($claimValue)) {
                     foreach($claimValue as $role) {
                         $user->addRole($role);

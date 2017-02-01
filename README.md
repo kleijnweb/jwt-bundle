@@ -176,6 +176,12 @@ class PreAuthenticatedUserProvider implements UserProviderInterface
 }
 ```
 
+### Assigning audience to user roles
+
+JwtBundle is can assign the audience claims in the JwtToken to the User objects user roles properties.
+
+In order to do this the User class needs to implement the `KleijnWeb\JwtBundle\User\UserInterface` interface
+
 ## License
 
 KleijnWeb\JwtBundle is made available under the terms of the [LGPL, version 3.0](https://spdx.org/licenses/LGPL-3.0.html#licenseText).
