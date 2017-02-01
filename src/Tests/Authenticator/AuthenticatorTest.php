@@ -190,7 +190,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $authenticator = new Authenticator($this->keys);
         $token         = $this->createToken(['aud' => 'guests']);
         $user          = $this->getMockBuilder(
-            UserInterface::class
+            'KleijnWeb\JwtBundle\User\UserInterface'
         )->getMockForAbstractClass();
         $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
 
@@ -209,7 +209,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $authenticator = new Authenticator($this->keys);
         $token         = $this->createToken(['aud' => ['guests', 'users']]);
         $user          = $this->getMockBuilder(
-            UserInterface::class
+            'KleijnWeb\JwtBundle\User\UserInterface'
         )->getMockForAbstractClass();
 
         $token         = new PreAuthenticatedToken($user, $token, 'providerkey');
