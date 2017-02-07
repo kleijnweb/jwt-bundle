@@ -135,10 +135,10 @@ class Authenticator implements SimplePreAuthenticatorInterface
             if ($claimKey === 'aud') {
                 if (is_array($claimValue)) {
                     foreach ($claimValue as $role) {
-                        $user->addRole($role);
+                        $user->addRole("ROLE_" . strtoupper($role));
                     }
                 } elseif (is_string($claimValue)) {
-                    $user->addRole($claimValue);
+                    $user->addRole("ROLE_" . strtoupper($claimValue));
                 }
             }
         }

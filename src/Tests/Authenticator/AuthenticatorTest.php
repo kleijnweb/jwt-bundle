@@ -205,11 +205,11 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
 
         $user->expects($this->once())
             ->method('addRole')
-            ->with('guests');
+            ->with('ROLE_GUESTS');
 
         $user->expects($this->once())
             ->method('getRoles')
-            ->willReturn(['guests']);
+            ->willReturn(['ROLE_GUESTS']);
 
         $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
     }
