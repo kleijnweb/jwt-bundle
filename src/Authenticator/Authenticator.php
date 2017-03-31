@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -7,7 +7,7 @@
  */
 namespace KleijnWeb\JwtBundle\Authenticator;
 
-use Symfony\Component\Security\Core\Authentication\SimplePreAuthenticatorInterface;
+use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
@@ -41,7 +41,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
      *
      * @return JwtKey
      */
-    public function getKeyById($id)
+    public function getKeyById(string $id)
     {
         if ($id) {
             if (!isset($this->keys[$id])) {
@@ -67,7 +67,7 @@ class Authenticator implements SimplePreAuthenticatorInterface
     {
         $tokenString = $request->headers->get('Authorization');
 
-        if (0 === strpos($tokenString, 'Bearer ')) {
+        if (0 === strpos((string)$tokenString, 'Bearer ')) {
             $tokenString = substr($tokenString, 7);
         }
 

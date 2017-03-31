@@ -10,7 +10,7 @@ Go to the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to fi
 
 For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger-bundle-example).
 
-*NOTE:* JwtBundle is compatible with PHP 5.4 and does not work with Symfony 3.0 (yet).   
+*NOTE:* Looking for PHP <7.0 and Symfony <3.0 support? Use a 0.x version.   
 
 ## Install And Configure
 

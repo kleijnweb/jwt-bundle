@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -22,21 +22,21 @@ class Encoder
     ];
 
     /**
-     * @param array $base64Decoded
+     * @param mixed $base64Decoded
      *
      * @return string
      */
-    public function encode($base64Decoded)
+    public function encode($base64Decoded): string
     {
         return $this->base64Encode($this->jsonEncode($base64Decoded));
     }
 
     /**
-     * @param array $data
+     * @param mixed $data
      *
      * @return string
      */
-    public function jsonEncode($data)
+    public function jsonEncode($data): string
     {
         $plain = json_encode($data);
 
@@ -52,7 +52,7 @@ class Encoder
      *
      * @return string
      */
-    public function base64Encode($base64Decoded)
+    public function base64Encode(string $base64Decoded): string
     {
         $base64Decoded = base64_encode($base64Decoded);
         $base64Decoded = rtrim(strtr($base64Decoded, '-_', '+/'), '=');

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -101,7 +101,7 @@ class JwtKey
     /**
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -193,7 +193,7 @@ class JwtKey
     /**
      * @return SignatureValidator
      */
-    public function getSignatureValidator()
+    public function getSignatureValidator(): SignatureValidator
     {
         if ($this->type == self::TYPE_RSA) {
             return new RsaValidator();

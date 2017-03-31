@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -29,7 +29,7 @@ class Decoder
      *
      * @return array
      */
-    public function decode($base64Encoded)
+    public function decode(string $base64Encoded): array
     {
         return $this->jsonDecode($this->base64Decode($base64Encoded));
     }
@@ -39,7 +39,7 @@ class Decoder
      *
      * @return array
      */
-    public function jsonDecode($plain)
+    public function jsonDecode(string $plain): array
     {
         $data = json_decode($plain, true);
 
@@ -53,9 +53,9 @@ class Decoder
     /**
      * @param string $base64Encoded
      *
-     * @return array
+     * @return string
      */
-    public function base64Decode($base64Encoded)
+    public function base64Decode(string $base64Encoded): string
     {
         if ($remainder = strlen($base64Encoded) % 4) {
             $base64Encoded .= str_repeat('=', 4 - $remainder);

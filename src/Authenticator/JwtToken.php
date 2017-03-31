@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -41,7 +41,7 @@ class JwtToken
     private $tokenString;
 
     /**
-     * @param $tokenData
+     * @param mixed $tokenData
      */
     public function __construct($tokenData)
     {
@@ -55,7 +55,7 @@ class JwtToken
     /**
      * @param string $tokenString
      */
-    public function setTokenFromString($tokenString)
+    public function setTokenFromString(string $tokenString)
     {
         $this->tokenString = $tokenString;
         $segments          = explode('.', $tokenString);
@@ -75,11 +75,11 @@ class JwtToken
     }
 
     /**
-     * @param array $header
-     * @param array $claims
-     * @param       $secret
+     * @param array  $header
+     * @param array  $claims
+     * @param string $secret
      */
-    public function setTokenFromParams($header, $claims, $secret)
+    public function setTokenFromParams(array $header, array $claims, string $secret)
     {
         $this->header = $header;
         $this->claims = $claims;
@@ -116,7 +116,7 @@ class JwtToken
      *
      * @throws \InvalidArgumentException
      */
-    public function validateSignature($secret, SignatureValidator $validator)
+    public function validateSignature(string $secret, SignatureValidator $validator)
     {
         if (!$validator->isValid($this->payload, $secret, $this->signature)) {
             throw new \InvalidArgumentException("Invalid signature");
@@ -124,7 +124,7 @@ class JwtToken
     }
 
     /**
-     * @return array
+     * @return array|string
      */
     public function getSubject()
     {
@@ -138,7 +138,7 @@ class JwtToken
     /**
      * @return array
      */
-    public function getClaims()
+    public function getClaims(): array
     {
         return $this->claims;
     }
@@ -146,7 +146,7 @@ class JwtToken
     /**
      * @return array
      */
-    public function getHeader()
+    public function getHeader(): array
     {
         return $this->header;
     }
@@ -154,10 +154,8 @@ class JwtToken
     /**
      * @return string
      */
-    public function getTokenString()
+    public function getTokenString(): string
     {
         return $this->tokenString;
     }
-
-
 }

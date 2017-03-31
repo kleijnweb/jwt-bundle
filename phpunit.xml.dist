@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<phpunit bootstrap="./src/Tests/Functional/App/app/autoload.php"
+<phpunit bootstrap="vendor/autoload.php"
          colors="true"
          syntaxCheck="true">
     <testsuites>
         <testsuite>
-            <directory suffix="Test.php">./src/Tests</directory>
+            <directory suffix="Test.php">tests</directory>
         </testsuite>
     </testsuites>
 
@@ -13,9 +13,8 @@
         <whitelist>
             <directory>./src/</directory>
             <exclude>
+                <directory>./tests</directory>
                 <directory>./src/Resources</directory>
-                <directory>./src/Resources</directory>
-                <directory>./src/Tests</directory>
                 <directory>./src/DependencyInjection</directory>
                 <file>./src/KleijnWebJwtBundle.php</file>
             </exclude>
@@ -23,6 +22,7 @@
     </filter>
 
     <php>
-        <server name="KERNEL_DIR" value="./src/Tests/Functional/App/app"/>
+        <server name="KERNEL_DIR" value="tests/functional/App/app"/>
     </php>
+
 </phpunit>

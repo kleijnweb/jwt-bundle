@@ -8,7 +8,6 @@
 
 namespace KleijnWeb\JwtBundle\Tests\Functional\App\Controller;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**

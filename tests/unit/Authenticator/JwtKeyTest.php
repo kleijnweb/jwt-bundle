@@ -63,7 +63,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validateTokenWillCallVerifySignatureOnToken()
     {
-        $secret = rand();
+        $secret = (string)rand();
         $key    = new JwtKey(['secret' => $secret]);
         $key->validateToken($this->createTokenMock($secret, $key));
     }
@@ -82,7 +82,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function canLoadSecretFromLoader()
     {
-        $secret = rand();
+        $secret = (string)rand();
         $token  = $this->createTokenMock($secret);
 
         $loaderMock = $this->getMockBuilder('KleijnWeb\JwtBundle\Authenticator\SecretLoader')->getMock();
