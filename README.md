@@ -10,7 +10,7 @@ Go to the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to fi
 
 For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger-bundle-example).
 
-*NOTE:* Looking for PHP <7.0 and Symfony <3.0 support? Use a 0.x version.   
+*NOTE:* Looking for PHP <7.0 and Symfony <2.8.7 support? Use a 0.x version.   
 
 ## Install And Configure
 
