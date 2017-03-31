@@ -7,12 +7,13 @@
  */
 namespace KleijnWeb\JwtBundle\Authenticator;
 
+use KleijnWeb\JwtBundle\User\JwtUserProvider;
 use Symfony\Component\Security\Http\Authentication\SimplePreAuthenticatorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\HttpFoundation\Request;
-use KleijnWeb\JwtBundle\User\UserInterface;
+use KleijnWeb\JwtBundle\User\UnsafeGroupsUserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 
@@ -100,10 +101,17 @@ class Authenticator implements SimplePreAuthenticatorInterface
             throw new \UnexpectedValueException("Expected credentials to be a JwtToken object");
         }
 
-        $user = $userProvider->loadUserByUsername($jwtToken->getSubject());
+        $username = $jwtToken->getSubject();
 
-        if ($user instanceof UserInterface) {
-            $user = $this->setUserRolesFromAudienceClaims($user, $token);
+        if ($userProvider instanceof JwtUserProvider) {
+            // Not ideal, sequential coupling
+            $userProvider->setClaimsUsingToken($jwtToken);
+        }
+
+        $user = $userProvider->loadUserByUsername($username);
+
+        if (!$userProvider instanceof JwtUserProvider && $user instanceof UnsafeGroupsUserInterface) {
+            $user = $this->setUserRolesFromAudienceClaims($user, $jwtToken->getClaims());
         }
 
         return new PreAuthenticatedToken($user, $token, $providerKey, $user->getRoles());
@@ -121,26 +129,15 @@ class Authenticator implements SimplePreAuthenticatorInterface
     }
 
     /**
-     * @param UserInterface  $user
-     * @param TokenInterface $token
+     * @param UnsafeGroupsUserInterface $user
+     * @param array                     $claims
      *
-     * @return UserInterface
+     * @return UnsafeGroupsUserInterface
      */
-    public function setUserRolesFromAudienceClaims(UserInterface $user, TokenInterface $token)
+    private function setUserRolesFromAudienceClaims(UnsafeGroupsUserInterface $user, array $claims)
     {
-        /** @var JwtToken $credentials */
-        $credentials = $token->getCredentials();
-
-        foreach ($credentials->getClaims() as $claimKey => $claimValue) {
-            if ($claimKey === 'aud') {
-                if (is_array($claimValue)) {
-                    foreach ($claimValue as $role) {
-                        $user->addRole("ROLE_" . strtoupper($role));
-                    }
-                } elseif (is_string($claimValue)) {
-                    $user->addRole("ROLE_" . strtoupper($claimValue));
-                }
-            }
+        foreach (JwtUserProvider::getRolesFromAudienceClaims($claims) as $role) {
+            $user->addRole($role);
         }
 
         return $user;

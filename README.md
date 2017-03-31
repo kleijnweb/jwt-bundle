@@ -141,46 +141,32 @@ You could use any information available in the token, such as the `kid`, `alg` o
 
 ### Integration Into Symfony Security
 
-When enabled, `Authenticator` will be used for any operations referencing a `SecurityDefinition` of type `apiKey` or `oath2`. You will need a *user provider*, which will be passed the
- `sub` value when invoking `loadUserByUsername`. Trivial example using 'in memory':
- 
+The simplest way to integrate JwtBundle to use the bundled User* classes. This will produce user objects from the token data alone with roles produced from the `aud` claim (and `IS_AUTHENTICATED_FULLY` whether `aud` was set or not).
+
 ```yml
 security:
-    firewalls:
-        secured_area:
-            pattern: ^/
-            stateless: true
-            simple_preauth:
-                authenticator: jwt.authenticator
-            provider: in_memory
+  firewalls:
+    default:
+      stateless: true
+      simple_preauth:
+        authenticator: jwt.authenticator
+      provider: jwt
 
-    providers:
-        in_memory:
-            memory:
-                users:
-                    joe:
-                        roles: 'IS_AUTHENTICATED_FULLY'
+  providers:
+    jwt:
+      id: jwt.user_provider
 ```
 
-In some cases, you don't actually want to "load users" and just use the username. In this case, create a simple `UserProvider` that just creates a user object without fetching from any external source.
+But JwtBundle will work with any other UserProvider.
 
-```php
-class PreAuthenticatedUserProvider implements UserProviderInterface
-{
-    public function loadUserByUsername($username)
-    {
-       return new MyPreAuthenticatedUserClass($username);
-    }
+### Assigning audience to user roles using an alternate UserProvider
 
-    //....
-}
-```
+JwtBundle can assign the audience claims in the JwtToken to the User objects user roles properties. Ideally, this is done in the UserProvider, so that the groups cannot be modified.
 
-### Assigning audience to user roles
+If this is an acceptable risk, you do not want to use JwtUser/JwtUserProvider, but *do* want JwtBundle to copy `aud` claims to user roles, you can have your User class implement the `KleijnWeb\JwtBundle\User\UnsafeGroupsUserInterface` interface, and JwtBundle will add the roles *after* the user is loaded from the provider.
+This behavior may be removed in future versions.
 
-JwtBundle is can assign the audience claims in the JwtToken to the User objects user roles properties.
-
-In order to do this the User class needs to implement the `KleijnWeb\JwtBundle\User\UserInterface` interface
+_NOTE:__ This function *only* copies the the roles from the token.
 
 ## License
 

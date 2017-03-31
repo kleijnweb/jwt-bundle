@@ -7,8 +7,13 @@
  */
 namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 
+use KleijnWeb\JwtBundle\Authenticator\Exception\InvalidTimeException;
+use KleijnWeb\JwtBundle\Authenticator\Exception\MissingClaimsException;
 use KleijnWeb\JwtBundle\Authenticator\JwtKey;
 use KleijnWeb\JwtBundle\Authenticator\JwtToken;
+use KleijnWeb\JwtBundle\Authenticator\SecretLoader;
+use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator;
+use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -73,7 +78,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function willValidateIfAudienceIsConfiguredAndMatchedAny()
     {
-        $key = new JwtKey(['secret'=> 'Buy the book', 'audience' => ['author', 'reader']]);
+        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => ['author', 'reader']]);
         $key->validateClaims(['sub' => 'john', 'aud' => 'reader']);
     }
 
@@ -85,7 +90,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
         $secret = (string)rand();
         $token  = $this->createTokenMock($secret);
 
-        $loaderMock = $this->getMockBuilder('KleijnWeb\JwtBundle\Authenticator\SecretLoader')->getMock();
+        $loaderMock = $this->getMockBuilder(SecretLoader::class)->getMock();
         $loaderMock->expects($this->once())->method('load')->with($token)->willReturn($secret);
 
         $key = new JwtKey(['loader' => $loaderMock]);
@@ -100,10 +105,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     {
         $key    = new JwtKey(['secret' => 'Buy the book']);
         $actual = $key->getSignatureValidator();
-        $this->assertInstanceOf(
-            'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator',
-            $actual
-        );
+        $this->assertInstanceOf(HmacValidator::class, $actual);
     }
 
     /**
@@ -113,10 +115,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     {
         $key    = new JwtKey(['secret' => 'Buy the book', 'type' => JwtKey::TYPE_RSA]);
         $actual = $key->getSignatureValidator();
-        $this->assertInstanceOf(
-            'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator',
-            $actual
-        );
+        $this->assertInstanceOf(RsaValidator::class, $actual);
     }
 
     /**
@@ -131,12 +130,11 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
         unset($claims['prn']);
 
-        $this->setExpectedException('\InvalidArgumentException');
+        $this->setExpectedException(MissingClaimsException::class);
 
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims($claims);
     }
-
 
 
     /**
@@ -151,7 +149,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
         unset($claims['sub']);
 
-        $this->setExpectedException('\InvalidArgumentException');
+        $this->setExpectedException(MissingClaimsException::class);
 
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims($claims);
@@ -159,21 +157,20 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function validationWillFailWhenExpiredByExp()
     {
+        $this->setExpectedException(InvalidTimeException::class, "Token is expired by 'exp'");
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims(['sub' => 'john', 'exp' => time() - 2]);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function validationWillNotFailWhenExpiredByExpButWithinLeeway()
     {
-        $key = new JwtKey(['secret' => 'Buy the book']);
+        $key = new JwtKey(['secret' => 'Buy the book', 'leeway' => 3]);
         $key->validateClaims(['sub' => 'john', 'exp' => time() - 2]);
     }
 
@@ -182,16 +179,17 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validationWillFailWhenExpiredByIatAndMinIssueTime()
     {
+        $this->setExpectedException(InvalidTimeException::class, "Server deemed your token too old");
         $key = new JwtKey(['secret' => 'Buy the book', 'minIssueTime' => time() + 2, 'leeway' => 3]);
         $key->validateClaims(['sub' => 'john', 'iat' => time()]);
     }
 
     /**
      * @test
-     * @expectedException \InvalidArgumentException
      */
     public function validationWillFailWhenNotValidYet()
     {
+        $this->setExpectedException(InvalidTimeException::class, "Token not valid yet");
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims(['sub' => 'john', 'nbf' => time() + 2]);
     }
@@ -199,7 +197,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function validationWillFailNotFailWhenNotValidYetButWithinLeeway()
+    public function validationWillNotFailWhenNotValidYetButWithinLeeway()
     {
         $key = new JwtKey(['secret' => 'Buy the book', 'leeway' => 3]);
         $key->validateClaims(['sub' => 'john', 'nbf' => time() + 2]);
@@ -274,9 +272,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function headerValidationWillFailWhenAlgoIsMissing()
     {
-        $key = new JwtKey(
-            ['secret' => 'Buy the book']
-        );
+        $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateHeader(['typ' => 'JWT']);
     }
 
@@ -286,9 +282,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function headerValidationWillFailWhenTypeIsMissing()
     {
-        $key = new JwtKey(
-            ['secret' => 'Buy the book']
-        );
+        $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateHeader(['alg' => JwtKey::TYPE_HMAC]);
     }
 
@@ -296,12 +290,10 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function headerValidationWillFailWhenAlgorithmDoesntMatchKey()
+    public function headerValidationWillFailWhenKeyAlgoDoesNotMatchTokenAlgo()
     {
-        $key = new JwtKey(
-            ['secret' => 'Buy the book']
-        );
-        $key->validateHeader(['alg' => JwtKey::TYPE_RSA]);
+        $key = new JwtKey(['secret' => 'Buy the book', 'type' => JwtKey::TYPE_RSA]);
+        $key->validateHeader(['typ' => 'JWT', 'alg' => JwtKey::TYPE_HMAC]);
     }
 
     /**
@@ -310,9 +302,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function headerValidationWillFailWhenTypeIsNotJwt()
     {
-        $key = new JwtKey(
-            ['secret' => 'Buy the book']
-        );
+        $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateHeader(['typ' => 'Something']);
     }
 

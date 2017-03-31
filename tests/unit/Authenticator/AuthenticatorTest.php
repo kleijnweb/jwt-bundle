@@ -10,10 +10,12 @@ namespace KleijnWeb\JwtBundle\Tests\Authenticator;
 use KleijnWeb\JwtBundle\Authenticator\Authenticator;
 use KleijnWeb\JwtBundle\Authenticator\JwtKey;
 use KleijnWeb\JwtBundle\Authenticator\JwtToken;
-use KleijnWeb\JwtBundle\User\UserInterface;
+use KleijnWeb\JwtBundle\User\JwtUserProvider;
+use KleijnWeb\JwtBundle\User\UnsafeGroupsUserInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\User\User;
+use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -185,19 +187,46 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function willSetClaimsOnJwtUserProvider()
+    {
+        $authenticator = new Authenticator($this->keys);
+        $token         = $this->createToken(['sub' => 'john', 'aud' => 'guests']);
+        $anonToken     = new PreAuthenticatedToken('foo', $token, 'myprovider');
+
+        $user = $this->getMockBuilder(UnsafeGroupsUserInterface::class)->getMockForAbstractClass();
+
+        $userProvider = $this->getMockBuilder(JwtUserProvider::class)->disableOriginalConstructor()->getMock();
+
+        $userProvider
+            ->expects($this->once())
+            ->method('loadUserByUsername')
+            ->willReturn($user);
+
+        $userProvider
+            ->expects($this->once())
+            ->method('setClaimsUsingToken')
+            ->with($token);
+
+        $user->expects($this->once())
+            ->method('getRoles')
+            ->willReturn(['ROLE_GUESTS']);
+
+        $authenticator->authenticateToken($anonToken, $userProvider, 'myprovider');
+    }
+
+    /**
+     * @deprecated
+     * @test
+     */
     public function willAddRolesFromAudienceClaimsInToken()
     {
         $authenticator = new Authenticator($this->keys);
         $token         = $this->createToken(['sub' => 'john', 'aud' => 'guests']);
         $anonToken     = new PreAuthenticatedToken('foo', $token, 'myprovider');
 
-        $user          = $this->getMockBuilder(
-            'KleijnWeb\JwtBundle\User\UserInterface'
-        )->getMockForAbstractClass();
+        $user = $this->getMockBuilder(UnsafeGroupsUserInterface::class)->getMockForAbstractClass();
 
-        $userProvider = $this->getMockBuilder(
-            'Symfony\Component\Security\Core\User\UserProviderInterface'
-        )->getMockForAbstractClass();
+        $userProvider = $this->getMockBuilder(UserProviderInterface::class)->getMockForAbstractClass();
 
         $userProvider->expects($this->once())
             ->method('loadUserByUsername')
@@ -215,6 +244,7 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @deprecated
      * @test
      */
     public function willAddMultipleRolesFromAudienceClaimsInToken()
@@ -223,13 +253,9 @@ class AuthenticatorTest extends \PHPUnit_Framework_TestCase
         $token         = $this->createToken(['sub' => 'john', 'aud' => ['guests', 'users']]);
         $anonToken     = new PreAuthenticatedToken('foo', $token, 'myprovider');
 
-        $user          = $this->getMockBuilder(
-            'KleijnWeb\JwtBundle\User\UserInterface'
-        )->getMockForAbstractClass();
+        $user = $this->getMockBuilder(UnsafeGroupsUserInterface::class)->getMockForAbstractClass();
 
-        $userProvider = $this->getMockBuilder(
-            'Symfony\Component\Security\Core\User\UserProviderInterface'
-        )->getMockForAbstractClass();
+        $userProvider = $this->getMockBuilder(UserProviderInterface::class)->getMockForAbstractClass();
 
         $userProvider->expects($this->once())
             ->method('loadUserByUsername')

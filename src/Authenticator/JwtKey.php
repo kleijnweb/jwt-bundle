@@ -8,6 +8,9 @@
 
 namespace KleijnWeb\JwtBundle\Authenticator;
 
+use KleijnWeb\JwtBundle\Authenticator\Exception\InvalidTimeException;
+use KleijnWeb\JwtBundle\Authenticator\Exception\KeyTokenMismatchException;
+use KleijnWeb\JwtBundle\Authenticator\Exception\MissingClaimsException;
 use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator;
 use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator;
 use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator;
@@ -152,32 +155,32 @@ class JwtKey
         if ($this->requiredClaims) {
             $missing = array_diff_key(array_flip($this->requiredClaims), $claims);
             if (count($missing)) {
-                throw new \InvalidArgumentException("Missing claims: " . implode(', ', $missing));
+                throw new MissingClaimsException("Missing claims: " . implode(', ', $missing));
             }
         }
         if ($this->issuer && !isset($claims['iss'])) {
-            throw new \InvalidArgumentException("Claim 'iss' is required");
+            throw new MissingClaimsException("Claim 'iss' is required");
         }
         if ($this->minIssueTime && !isset($claims['iat'])) {
-            throw new \InvalidArgumentException("Claim 'iat' is required");
+            throw new MissingClaimsException("Claim 'iat' is required");
         }
         if (!empty($this->audience) && !isset($claims['aud'])) {
-            throw new \InvalidArgumentException("Claim 'aud' is required");
+            throw new MissingClaimsException("Claim 'aud' is required");
         }
         if ((!isset($claims['sub']) || empty($claims['sub'])) && (!isset($claims['prn']) || empty($claims['prn']))) {
-            throw new \InvalidArgumentException("Missing principle subject claim");
+            throw new MissingClaimsException("Missing principle subject claim");
         }
-        if (isset($claims['exp']) && $claims['exp'] < time()) {
-            throw new \InvalidArgumentException("Token is expired by 'exp'");
+        if (isset($claims['exp']) && $claims['exp'] + $this->issuerTimeLeeway < time()) {
+            throw new InvalidTimeException("Token is expired by 'exp'");
         }
-        if (isset($claims['iat']) && $claims['iat'] < ($this->minIssueTime - $this->issuerTimeLeeway)) {
-            throw new \InvalidArgumentException("Server deemed your token too old");
+        if (isset($claims['iat']) && $claims['iat'] < ($this->minIssueTime + $this->issuerTimeLeeway)) {
+            throw new InvalidTimeException("Server deemed your token too old");
         }
         if (isset($claims['nbf']) && ($claims['nbf'] - $this->issuerTimeLeeway) > time()) {
-            throw new \InvalidArgumentException("Token not valid yet");
+            throw new InvalidTimeException("Token not valid yet");
         }
         if (isset($claims['iss']) && $claims['iss'] !== $this->issuer) {
-            throw new \InvalidArgumentException("Issuer mismatch");
+            throw new KeyTokenMismatchException("Issuer mismatch");
         }
         if (isset($claims['aud']) &&
             (
@@ -185,7 +188,7 @@ class JwtKey
                 || (!is_array($this->audience) && $claims['aud'] !== $this->audience)
             )
         ) {
-            throw new \InvalidArgumentException("Audience mismatch");
+            throw new KeyTokenMismatchException("Audience mismatch");
         }
     }
 

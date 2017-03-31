@@ -2,3 +2,6 @@ services:
   jwt.authenticator:
       class:  KleijnWeb\JwtBundle\Authenticator\Authenticator
       public: false
+  jwt.user_provider:
+      class:  KleijnWeb\JwtBundle\User\JwtUserProvider
+      public: false
