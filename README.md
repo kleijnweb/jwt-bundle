@@ -166,7 +166,7 @@ JwtBundle can assign the audience claims in the JwtToken to the User objects use
 If this is an acceptable risk, you do not want to use JwtUser/JwtUserProvider, but *do* want JwtBundle to copy `aud` claims to user roles, you can have your User class implement the `KleijnWeb\JwtBundle\User\UnsafeGroupsUserInterface` interface, and JwtBundle will add the roles *after* the user is loaded from the provider.
 This behavior may be removed in future versions.
 
-_NOTE:__ This function *only* copies the the roles from the token.
+_NOTE:_ This function *only* copies the the roles from the token.
 
 ## License
 
