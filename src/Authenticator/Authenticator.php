@@ -37,11 +37,11 @@ class Authenticator implements SimplePreAuthenticatorInterface
     }
 
     /**
-     * @param string $id
+     * @param string|null $id
      *
      * @return JwtKey
      */
-    public function getKeyById(string $id)
+    public function getKeyById(string $id = null)
     {
         if ($id) {
             if (!isset($this->keys[$id])) {
