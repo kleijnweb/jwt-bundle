@@ -11,9 +11,9 @@ namespace KleijnWeb\JwtBundle\Jwt;
 use KleijnWeb\JwtBundle\Jwt\Exception\InvalidTimeException;
 use KleijnWeb\JwtBundle\Jwt\Exception\KeyTokenMismatchException;
 use KleijnWeb\JwtBundle\Jwt\Exception\MissingClaimsException;
-use KleijnWeb\JwtBundle\Jwt\SignatureValidator\SignatureValidator;
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\HmacValidator;
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\RsaValidator;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\SignatureValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>

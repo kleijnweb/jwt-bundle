@@ -11,6 +11,7 @@ namespace KleijnWeb\JwtBundle\Firewall;
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
+use KleijnWeb\JwtBundle\Authentication\JwtAuthenticationToken;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;

@@ -7,8 +7,8 @@
  */
 namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
-use KleijnWeb\JwtBundle\Firewall\JwtAuthenticationProvider;
-use KleijnWeb\JwtBundle\Firewall\JwtAuthenticationToken;
+use KleijnWeb\JwtBundle\Authentication\JwtAuthenticationProvider;
+use KleijnWeb\JwtBundle\Authentication\JwtAuthenticationToken;
 use KleijnWeb\JwtBundle\Jwt\JwtKey;
 use KleijnWeb\JwtBundle\Jwt\JwtToken;
 use KleijnWeb\JwtBundle\User\JwtUserProvider;

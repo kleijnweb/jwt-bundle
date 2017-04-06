@@ -7,7 +7,9 @@
  */
 namespace KleijnWeb\JwtBundle\User;
 
-interface UnsafeGroupsUserInterface extends \Symfony\Component\Security\Core\User\UserInterface
+use Symfony\Component\Security\Core\User\UserInterface;
+
+interface UnsafeGroupsUserInterface extends UserInterface
 {
     /**
      * @param array $roles

@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\Firewall;
+namespace KleijnWeb\JwtBundle\Authentication;
 
 use Symfony\Component\Security\Core\Authentication\Token\AbstractToken;
 
@@ -35,12 +35,5 @@ class JwtAuthenticationToken extends AbstractToken
     public function getCredentials()
     {
         return $this->tokenString;
-    }
-
-    public function eraseCredentials()
-    {
-        $this->tokenString = '';
-
-        parent::eraseCredentials();
     }
 }

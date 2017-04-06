@@ -6,7 +6,7 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\Firewall;
+namespace KleijnWeb\JwtBundle\Authentication;
 
 use KleijnWeb\JwtBundle\Jwt\JwtKey;
 use KleijnWeb\JwtBundle\Jwt\JwtToken;
