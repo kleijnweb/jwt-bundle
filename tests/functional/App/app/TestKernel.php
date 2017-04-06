@@ -14,7 +14,8 @@ class TestKernel extends Kernel
             new Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
             new KleijnWeb\JwtBundle\KleijnWebJwtBundle(),
             new KleijnWeb\JwtBundle\Tests\Functional\App\TestBundle(),
-            new Symfony\Bundle\SecurityBundle\SecurityBundle()
+            new Symfony\Bundle\SecurityBundle\SecurityBundle(),
+            new Symfony\Bundle\MonologBundle\MonologBundle()
         ];
 
         return $bundles;
@@ -25,6 +26,6 @@ class TestKernel extends Kernel
      */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(__DIR__ . '/config.yml');
+        $loader->load(__DIR__ . '/config_' . $this->getEnvironment() .'.yml');
     }
 }

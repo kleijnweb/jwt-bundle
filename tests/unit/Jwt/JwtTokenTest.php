@@ -5,9 +5,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\Authenticator;
+namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
-use KleijnWeb\JwtBundle\Authenticator\JwtToken;
+use KleijnWeb\JwtBundle\Jwt\JwtToken;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\SignatureValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -16,7 +17,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
 {
     // @codingStandardsIgnoreStart
     const EXAMPLE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ';
-    const KID_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtleU9uZSJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.Zhhr_UtsTzjrBZmi8AAgJYqCINiiEc45v94_3nvxW1A';
+    const KID_TOKEN     = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6ImtleU9uZSJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.Zhhr_UtsTzjrBZmi8AAgJYqCINiiEc45v94_3nvxW1A';
     // @codingStandardsIgnoreEnd
 
     /**
@@ -103,9 +104,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
     public function willFailWhenSignatureValidationIsUnsuccessful()
     {
         $validator = $this
-            ->getMockBuilder(
-                'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator'
-            )
+            ->getMockBuilder(SignatureValidator::class)
             ->getMockForAbstractClass();
 
         $token = new JwtToken(self::EXAMPLE_TOKEN);
@@ -120,9 +119,7 @@ class JwtTokenTest extends \PHPUnit_Framework_TestCase
     public function willNitFailWhenSignatureValidationIsSuccessful()
     {
         $validator = $this
-            ->getMockBuilder(
-                'KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator'
-            )
+            ->getMockBuilder(SignatureValidator::class)
             ->getMockForAbstractClass();
 
         $token = new JwtToken(self::EXAMPLE_TOKEN);

@@ -5,15 +5,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\Authenticator;
+namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
-use KleijnWeb\JwtBundle\Authenticator\Exception\InvalidTimeException;
-use KleijnWeb\JwtBundle\Authenticator\Exception\MissingClaimsException;
-use KleijnWeb\JwtBundle\Authenticator\JwtKey;
-use KleijnWeb\JwtBundle\Authenticator\JwtToken;
-use KleijnWeb\JwtBundle\Authenticator\SecretLoader;
-use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator;
-use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator;
+use KleijnWeb\JwtBundle\Jwt\Exception\InvalidTimeException;
+use KleijnWeb\JwtBundle\Jwt\Exception\MissingClaimsException;
+use KleijnWeb\JwtBundle\Jwt\JwtKey;
+use KleijnWeb\JwtBundle\Jwt\JwtToken;
+use KleijnWeb\JwtBundle\Jwt\SecretLoader;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\HmacValidator;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\RsaValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -130,7 +130,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
         unset($claims['prn']);
 
-        $this->setExpectedException(MissingClaimsException::class);
+        $this->expectException(MissingClaimsException::class);
 
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims($claims);
@@ -149,7 +149,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
 
         unset($claims['sub']);
 
-        $this->setExpectedException(MissingClaimsException::class);
+        $this->expectException(MissingClaimsException::class);
 
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims($claims);
@@ -160,7 +160,9 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validationWillFailWhenExpiredByExp()
     {
-        $this->setExpectedException(InvalidTimeException::class, "Token is expired by 'exp'");
+        $this->expectException(InvalidTimeException::class);
+        $this->expectExceptionMessage("Token is expired by 'exp'");
+
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims(['sub' => 'john', 'exp' => time() - 2]);
     }
@@ -179,7 +181,8 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validationWillFailWhenExpiredByIatAndMinIssueTime()
     {
-        $this->setExpectedException(InvalidTimeException::class, "Server deemed your token too old");
+        $this->expectException(InvalidTimeException::class);
+        $this->expectExceptionMessage("Server deemed your token too old");
         $key = new JwtKey(['secret' => 'Buy the book', 'minIssueTime' => time() + 2, 'leeway' => 3]);
         $key->validateClaims(['sub' => 'john', 'iat' => time()]);
     }
@@ -189,7 +192,9 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
      */
     public function validationWillFailWhenNotValidYet()
     {
-        $this->setExpectedException(InvalidTimeException::class, "Token not valid yet");
+        $this->expectException(InvalidTimeException::class);
+        $this->expectExceptionMessage("Token not valid yet");
+
         $key = new JwtKey(['secret' => 'Buy the book']);
         $key->validateClaims(['sub' => 'john', 'nbf' => time() + 2]);
     }
@@ -315,9 +320,7 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     private function createTokenMock($secret, JwtKey $key = null)
     {
         /** @var JwtToken $token */
-        $token = $tokenMock = $this->getMockBuilder(
-            'KleijnWeb\JwtBundle\Authenticator\JwtToken'
-        )->disableOriginalConstructor()->getMock();
+        $token = $tokenMock = $this->getMockBuilder(JwtToken::class)->disableOriginalConstructor()->getMock();
 
         $tokenMock->expects($this->once())
             ->method('validateSignature')

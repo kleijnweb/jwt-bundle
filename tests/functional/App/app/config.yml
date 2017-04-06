@@ -39,24 +39,9 @@ services:
     test.secret.loader:
         class: 'KleijnWeb\JwtBundle\Tests\Functional\App\Service\DummySecretLoader'
 
-security:
-    firewalls:
-        secured_area:
-            pattern: ^/secured
-            stateless: true
-            simple_preauth:
-                authenticator: jwt.authenticator
-            provider: in_memory
-
-    providers:
-        in_memory:
-            memory:
-                users:
-                    john:
-                        roles: 'IS_AUTHENTICATED_FULLY'
-                    joe:
-                        roles: 'ROLE_ADMIN'
-
-    access_control:
-        - { path: ^/secured-with-secret-loader, roles: ROLE_ADMIN }
-        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
+monolog:
+  handlers:
+    stderr:
+      type:  stream
+      path:  php://stdout
+      level: debug

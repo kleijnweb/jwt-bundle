@@ -5,9 +5,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Authenticator;
+namespace KleijnWeb\JwtBundle\Jwt;
 
-class Encoder
+/**
+ * @author John Kleijn <john@kleijnweb.nl>
+ */
+class Decoder
 {
     /**
      * @var array
@@ -22,41 +25,42 @@ class Encoder
     ];
 
     /**
-     * @param mixed $base64Decoded
+     * @param string $base64Encoded
      *
-     * @return string
+     * @return array
      */
-    public function encode($base64Decoded): string
+    public function decode(string $base64Encoded): array
     {
-        return $this->base64Encode($this->jsonEncode($base64Decoded));
+        return $this->jsonDecode($this->base64Decode($base64Encoded));
     }
 
     /**
-     * @param mixed $data
+     * @param string $plain
      *
-     * @return string
+     * @return array
      */
-    public function jsonEncode($data): string
+    public function jsonDecode(string $plain): array
     {
-        $plain = json_encode($data);
+        $data = json_decode($plain, true);
 
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new \RuntimeException(self::$messages[json_last_error()]);
         }
 
-        return $plain;
+        return $data;
     }
 
     /**
-     * @param string $base64Decoded
+     * @param string $base64Encoded
      *
      * @return string
      */
-    public function base64Encode(string $base64Decoded): string
+    public function base64Decode(string $base64Encoded): string
     {
-        $base64Decoded = base64_encode($base64Decoded);
-        $base64Decoded = rtrim(strtr($base64Decoded, '-_', '+/'), '=');
+        if ($remainder = strlen($base64Encoded) % 4) {
+            $base64Encoded .= str_repeat('=', 4 - $remainder);
+        }
 
-        return $base64Decoded;
+        return base64_decode(strtr($base64Encoded, '-_', '+/'));
     }
 }

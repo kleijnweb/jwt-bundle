@@ -6,23 +6,23 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\Authenticator\SignatureValidator;
+namespace KleijnWeb\JwtBundle\Jwt\SignatureValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class RsaValidator implements SignatureValidator
+class HmacValidator implements SignatureValidator
 {
-    const SHA256 = OPENSSL_ALGO_SHA256;
-    const SHA512 = OPENSSL_ALGO_SHA512;
+    const SHA256 = 'sha256';
+    const SHA512 = 'sha512';
 
     /**
-     * @var int
+     * @var string
      */
     private $hashAlgorithm;
 
     /**
-     * @param int $hashAlgorithm
+     * @param string $hashAlgorithm
      */
     public function __construct($hashAlgorithm = self::SHA256)
     {
@@ -31,13 +31,13 @@ class RsaValidator implements SignatureValidator
 
     /**
      * @param string $payload
-     * @param string $publicKey
+     * @param string $secret
      * @param string $signature
      *
      * @return bool
      */
-    public function isValid($payload, $publicKey, $signature)
+    public function isValid($payload, $secret, $signature)
     {
-        return openssl_verify($payload, $signature, $publicKey, $this->hashAlgorithm) === 1;
+        return $signature === hash_hmac($this->hashAlgorithm, $payload, $secret, true);
     }
 }

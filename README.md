@@ -4,7 +4,7 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kleijnweb/jwt-bundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kleijnweb/jwt-bundle/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/kleijnweb/jwt-bundle/v/stable)](https://packagist.org/packages/kleijnweb/jwt-bundle)
 
-Integrate OAuth 2.0 compatible JWT API tokens for authentication.
+Integrate JWT API tokens for authentication.
 
 Go to the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to find details about the latest release.
 
@@ -17,9 +17,6 @@ For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger
 Install using composer (`composer require kleijnweb/jwt-bundle`). You want to check out the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to ensure you are getting what you want and optionally verify your download.
 
 ## Authentication
-
-JwtBundle comes with a `Authenticator` which implements a OAuth 2 compatible token-based authentication method. 
-The role of the server with JwtBundle in OAuth terms is "Resource Server" (ie your app has some resources belonging to the "Resource Owner" that a client program wants access to). 
 
 The token is validated using standard (reserved) JWT claims:
 
@@ -43,7 +40,7 @@ All other claims encountered are ignored. The JWT header is checked for `kid` (s
 
 ### Keys
 
-`Authenticator` supports multiple keys, and allows all options to be configured per `kid` (key ID, which must be included in the JWT header when more than 1 key is configured):
+The authenticator supports multiple keys, and allows all options to be configured per `kid` (key ID, which must be included in the JWT header when more than 1 key is configured):
 
 ```yml
 jwt: 
@@ -55,15 +52,6 @@ jwt:
         require: [nbf, exp, my-claim] # Mark claims as required
         leeway: 5 # Allow 5 seconds of time de-synchronization (both ways) between this server and api.server.com
 ```
-
-Clients should pass the token using an `Authentication: Bearer` header, eg:
-
-```
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-```
-
-While this is compatible with OAuth 2.0, use of such a protocol is outside of the scope of JwtBundle and entirely optional. For more information on using JWT Bearer tokens in OAuth, refer to [this spec](http://tools.ietf.org/html/draft-ietf-oauth-jwt-bearer-07).
-
 JwtBundle and the issuer must share a secret in order for JwtBundle to be able to verify tokens. You can choose between a *pre shared key* (PSK) or *asymmetric keys*. 
 
 ```yml
@@ -141,7 +129,25 @@ You could use any information available in the token, such as the `kid`, `alg` o
 
 ### Integration Into Symfony Security
 
-The simplest way to integrate JwtBundle to use the bundled User* classes. This will produce user objects from the token data alone with roles produced from the `aud` claim (and `IS_AUTHENTICATED_FULLY` whether `aud` was set or not).
+Synopsis:
+
+```yml
+security:
+  firewalls:
+    default:
+      stateless: true
+      jwt:
+        header: X-Header-Name # Defaults to "Authorization", in which case encountered "Bearer" prefixes are stripped
+        provider: jwt
+
+  providers:
+    jwt:
+      id: jwt.user_provider
+```
+
+Using the bundled user provider is optional. This will produce user objects from the token data alone with roles produced from the `aud` claim (and `IS_AUTHENTICATED_FULLY` whether `aud` was set or not).
+
+For BC reasons, the following also works:
 
 ```yml
 security:
@@ -156,8 +162,6 @@ security:
     jwt:
       id: jwt.user_provider
 ```
-
-But JwtBundle will work with any other UserProvider.
 
 ### Assigning audience to user roles using an alternate UserProvider
 

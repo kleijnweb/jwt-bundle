@@ -6,14 +6,14 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\Authenticator;
+namespace KleijnWeb\JwtBundle\Jwt;
 
-use KleijnWeb\JwtBundle\Authenticator\Exception\InvalidTimeException;
-use KleijnWeb\JwtBundle\Authenticator\Exception\KeyTokenMismatchException;
-use KleijnWeb\JwtBundle\Authenticator\Exception\MissingClaimsException;
-use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\SignatureValidator;
-use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\HmacValidator;
-use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator;
+use KleijnWeb\JwtBundle\Jwt\Exception\InvalidTimeException;
+use KleijnWeb\JwtBundle\Jwt\Exception\KeyTokenMismatchException;
+use KleijnWeb\JwtBundle\Jwt\Exception\MissingClaimsException;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\SignatureValidator;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\HmacValidator;
+use KleijnWeb\JwtBundle\Jwt\SignatureValidator\RsaValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -21,7 +21,7 @@ use KleijnWeb\JwtBundle\Authenticator\SignatureValidator\RsaValidator;
 class JwtKey
 {
     const TYPE_HMAC = 'HS256';
-    const TYPE_RSA = 'RS256';
+    const TYPE_RSA  = 'RS256';
 
     /**
      * @var string
@@ -182,13 +182,16 @@ class JwtKey
         if (isset($claims['iss']) && $claims['iss'] !== $this->issuer) {
             throw new KeyTokenMismatchException("Issuer mismatch");
         }
-        if (isset($claims['aud']) &&
-            (
-                (is_array($this->audience) && !in_array($claims['aud'], $this->audience))
-                || (!is_array($this->audience) && $claims['aud'] !== $this->audience)
-            )
-        ) {
-            throw new KeyTokenMismatchException("Audience mismatch");
+
+        if (count($this->audience)) {
+            if (isset($claims['aud']) &&
+                (
+                    (is_array($this->audience) && !in_array($claims['aud'], $this->audience))
+                    || (!is_array($this->audience) && $claims['aud'] !== $this->audience)
+                )
+            ) {
+                throw new KeyTokenMismatchException("Audience mismatch");
+            }
         }
     }
 

@@ -6,17 +6,19 @@
  * file that was distributed with this source code.
  */
 
-namespace KleijnWeb\JwtBundle\Authenticator;
+namespace KleijnWeb\JwtBundle\Jwt\SignatureValidator;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-interface SecretLoader
+interface SignatureValidator
 {
     /**
-     * @param JwtToken $token
+     * @param string $payload
+     * @param string $secret
+     * @param string $signature
      *
-     * @return string
+     * @return bool
      */
-    public function load(JwtToken $token);
+    public function isValid($payload, $secret, $signature);
 }

@@ -8,8 +8,8 @@
 
 namespace KleijnWeb\JwtBundle\Tests\Functional\App\Service;
 
-use KleijnWeb\JwtBundle\Authenticator\JwtToken;
-use KleijnWeb\JwtBundle\Authenticator\SecretLoader;
+use KleijnWeb\JwtBundle\Jwt\JwtToken;
+use KleijnWeb\JwtBundle\Jwt\SecretLoader;
 
 class DummySecretLoader implements SecretLoader
 {

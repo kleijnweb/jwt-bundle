@@ -5,9 +5,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\Authenticator;
+namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
-use KleijnWeb\JwtBundle\Authenticator\Encoder;
+use KleijnWeb\JwtBundle\Jwt\Encoder;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>

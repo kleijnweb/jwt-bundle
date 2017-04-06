@@ -5,7 +5,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Authenticator\Exception;
+namespace KleijnWeb\JwtBundle\Jwt\Exception;
 
 class KeyTokenMismatchException extends \InvalidArgumentException {
 

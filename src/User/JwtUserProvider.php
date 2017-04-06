@@ -8,7 +8,7 @@
 
 namespace KleijnWeb\JwtBundle\User;
 
-use KleijnWeb\JwtBundle\Authenticator\JwtToken;
+use KleijnWeb\JwtBundle\Jwt\JwtToken;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 

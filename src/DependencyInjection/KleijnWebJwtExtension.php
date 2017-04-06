@@ -35,7 +35,7 @@ class KleijnWebJwtExtension extends Extension
 
             $keyConfig['kid'] = $keyId;
             $keyDefinition    = new Definition('jwt.keys.' . $keyId);
-            $keyDefinition->setClass('KleijnWeb\JwtBundle\Authenticator\JwtKey');
+            $keyDefinition->setClass('KleijnWeb\JwtBundle\Jwt\JwtKey');
 
             if (isset($keyConfig['loader'])) {
                 $keyConfig['loader'] = new Reference($keyConfig['loader']);
@@ -45,6 +45,7 @@ class KleijnWebJwtExtension extends Extension
         }
 
         $container->getDefinition('jwt.authenticator')->addArgument($keys);
+        $container->getDefinition('jwt.security.authentication.provider')->addArgument($keys);
 
     }
 

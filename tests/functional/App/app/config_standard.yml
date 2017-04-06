@@ -1,0 +1,15 @@
+imports:
+  - { resource: 'config.yml' }
+
+security:
+  firewalls:
+    default:
+      pattern: '^/secured.*'
+      stateless: true
+      jwt: ~
+      provider: jwt
+
+
+  providers:
+    jwt:
+      id: jwt.user_provider
