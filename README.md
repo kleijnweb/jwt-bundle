@@ -12,7 +12,7 @@ For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger
 
 *NOTE:* Looking for PHP <7.0 and Symfony <2.8.7 support? Use a 0.x version.   
 
-## Install And Configure
+## Install
 
 Install using composer (`composer require kleijnweb/jwt-bundle`). You want to check out the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to ensure you are getting what you want and optionally verify your download.
 
@@ -125,7 +125,7 @@ class SimpleSecretLoader implements SecretLoader
 }
 ```
 
-You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`. Be sure to throw an `AuthenticationException` when appropriate (eg missing claims needed for loading secret). 
+You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`. Be sure to throw an `AuthenticationException` when appropriate (eg missing claims needed for loading secret).
 
 ### Integration Into Symfony Security
 
@@ -147,22 +147,6 @@ security:
 
 Using the bundled user provider is optional. This will produce user objects from the token data alone with roles produced from the `aud` claim (and `IS_AUTHENTICATED_FULLY` whether `aud` was set or not).
 
-For BC reasons, the following also works:
-
-```yml
-security:
-  firewalls:
-    default:
-      stateless: true
-      simple_preauth:
-        authenticator: jwt.authenticator
-      provider: jwt
-
-  providers:
-    jwt:
-      id: jwt.user_provider
-```
-
 ### Assigning audience to user roles using an alternate UserProvider
 
 JwtBundle can assign the audience claims in the JwtToken to the User objects user roles properties. Ideally, this is done in the UserProvider, so that the groups cannot be modified.
@@ -171,6 +155,24 @@ If this is an acceptable risk, you do not want to use JwtUser/JwtUserProvider, b
 This behavior may be removed in future versions.
 
 _NOTE:_ This function *only* copies the the roles from the token.
+
+### Issuing Token
+
+Issuing tokens is currently limited to `HS256`. To create a token string:
+
+```php
+$token = new JwtToken([
+    'header' => [
+        'alg' => 'HS256',
+        'typ' => 'JWT',
+        'kid' => 'Optional Key ID'
+    ],
+    'claims' => [ /*  Array of claims */ ],
+    'secret' => 'Your Secret'
+]);
+
+$token->getTokenString();
+```
 
 ## License
 

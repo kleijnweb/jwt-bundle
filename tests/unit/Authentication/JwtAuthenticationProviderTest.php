@@ -5,8 +5,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace KleijnWeb\JwtBundle\Tests\Jwt;
+namespace KleijnWeb\JwtBundle\Tests\Authentication;
 
+use KleijnWeb\JwtBundle\Authentication\JwtAuthenticatedToken;
 use KleijnWeb\JwtBundle\Authentication\JwtAuthenticationProvider;
 use KleijnWeb\JwtBundle\Authentication\JwtAuthenticationToken;
 use KleijnWeb\JwtBundle\Jwt\JwtKey;
@@ -149,6 +150,24 @@ class JwtAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
         $this->expectException(\LogicException::class);
 
         $jwtAuthenticationProvider->authenticate($anonToken);
+    }
+
+    /**
+     * @test
+     */
+    public function authenticateWillReturnAuthenticatedToken()
+    {
+        $jwtAuthenticationProvider = new JwtAuthenticationProvider($this->standardUserProviderMock, $this->keys);
+        $authToken                 = new JwtAuthenticationToken([], self::TEST_TOKEN);
+
+        /** @var \PHPUnit_Framework_MockObject_MockObject $mock */
+        $mock = $this->standardUserProviderMock;
+        $mock
+            ->expects($this->once())
+            ->method('loadUserByUsername')
+            ->willReturn(new User('john', 'hi there'));
+
+        $this->assertInstanceOf(JwtAuthenticatedToken::class, $jwtAuthenticationProvider->authenticate($authToken));
     }
 
     /**

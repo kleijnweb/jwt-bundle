@@ -8,7 +8,7 @@
 
 namespace KleijnWeb\JwtBundle\Tests\Functional;
 
-use KleijnWeb\JwtBundle\Tests\Jwt\JwtAuthenticationProviderTest;
+use KleijnWeb\JwtBundle\Tests\Authentication\JwtAuthenticationProviderTest;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;

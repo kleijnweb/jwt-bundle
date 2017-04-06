@@ -66,7 +66,7 @@ class JwtAuthenticationListener implements ListenerInterface
      *
      * @return JwtAuthenticationToken|null
      */
-    public function createToken(Request $request)
+    private function createToken(Request $request)
     {
         $tokenString = $request->headers->get($this->header);
 

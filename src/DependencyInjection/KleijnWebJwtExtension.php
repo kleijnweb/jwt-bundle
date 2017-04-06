@@ -44,8 +44,8 @@ class KleijnWebJwtExtension extends Extension
             $keys[] = $keyDefinition;
         }
 
-        $container->getDefinition('jwt.authenticator')->addArgument($keys);
         $container->getDefinition('jwt.security.authentication.provider')->addArgument($keys);
+        $container->getDefinition('jwt.token_issuer')->addArgument($keys);
 
     }
 
