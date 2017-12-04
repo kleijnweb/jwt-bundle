@@ -179,13 +179,14 @@ class JwtKey
         if (isset($claims['iss']) && $claims['iss'] !== $this->issuer) {
             throw new \InvalidArgumentException("Issuer mismatch");
         }
-        if (isset($claims['aud']) &&
-            (
-                (is_array($this->audience) && !in_array($claims['aud'], $this->audience))
-                || (!is_array($this->audience) && $claims['aud'] !== $this->audience)
-            )
-        ) {
-            throw new \InvalidArgumentException("Audience mismatch");
+        if (isset($claims['aud'])) {
+            if (is_array($claims['aud'])) {
+                foreach ($claims['aud'] as $claim) {
+                    $this->validateAudience($claim);
+                }
+            } else {
+                $this->validateAudience($claims['aud']);
+            }
         }
     }
 
@@ -200,6 +201,18 @@ class JwtKey
         }
 
         return new HmacValidator();
+    }
+
+    /**
+     * @param $audience
+     */
+    private function validateAudience($audience)
+    {
+        if ((is_array($this->audience) && !in_array($audience, $this->audience))
+            || (!is_array($this->audience) && $audience !== $this->audience)
+        ) {
+            throw new \InvalidArgumentException("Audience mismatch");
+        }
     }
 
     /**
