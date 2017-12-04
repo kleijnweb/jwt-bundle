@@ -85,6 +85,15 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function willValidateIfAudienceClaimIsArrayAndMatchesAll()
+    {
+        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => ['author', 'editor', 'reader']]);
+        $key->validateClaims(['sub' => 'john', 'aud' => ['author', 'reader']]);
+    }
+
+    /**
+     * @test
+     */
     public function canLoadSecretFromLoader()
     {
         $secret = (string)rand();
@@ -228,6 +237,15 @@ class JwtKeyTest extends \PHPUnit_Framework_TestCase
         $key->validateClaims(['sub' => 'john', 'aud' => 'the neighbours']);
     }
 
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function validationWillFailWhenSingleAudienceClaimFromArrayDoesNotMatch()
+    {
+        $key = new JwtKey(['secret' => 'Buy the book', 'audience' => 'me']);
+        $key->validateClaims(['sub' => 'john', 'aud' => ['the neighbours', 'me']]);
+    }
 
     /**
      * @test
