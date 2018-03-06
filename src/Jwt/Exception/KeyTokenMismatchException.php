@@ -7,6 +7,7 @@
  */
 namespace KleijnWeb\JwtBundle\Jwt\Exception;
 
-class KeyTokenMismatchException extends \InvalidArgumentException {
+class KeyTokenMismatchException extends \InvalidArgumentException
+{
 
 }

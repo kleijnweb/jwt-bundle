@@ -49,5 +49,4 @@ class JwtAuthenticationFactory implements SecurityFactoryInterface
 
         return [$providerId, $listenerId, $defaultEntryPoint];
     }
-
 }

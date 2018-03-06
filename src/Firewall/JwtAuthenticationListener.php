@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -42,8 +42,11 @@ class JwtAuthenticationListener implements ListenerInterface
      * @param AuthenticationManagerInterface $authenticationManager
      * @param string                         $header
      */
-    public function __construct(TokenStorageInterface $tokenStorage, AuthenticationManagerInterface $authenticationManager, string $header = self::HEADER_AUTH)
-    {
+    public function __construct(
+        TokenStorageInterface $tokenStorage,
+        AuthenticationManagerInterface $authenticationManager,
+        string $header = self::HEADER_AUTH
+    ) {
         $this->tokenStorage          = $tokenStorage;
         $this->authenticationManager = $authenticationManager;
         $this->header                = $header;

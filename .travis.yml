@@ -8,10 +8,15 @@ matrix:
   include:
     - php: 7.0
       env: COMPOSER_FLAGS="--prefer-lowest"
+      script: bin/phpunit
     - php: 7.0
       script: bin/phpunit --coverage-clover build/logs/clover.xml
       before_script:
         - mkdir -p build/logs
       after_script:
         - travis_retry php bin/coveralls -v
+    - php: 7.2
+      script: bin/phpunit
+    - php: 7.2
+      script: bin/phpcs --standard=PSR2 src tests
   fast_finish: true

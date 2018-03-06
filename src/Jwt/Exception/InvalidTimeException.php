@@ -7,6 +7,7 @@
  */
 namespace KleijnWeb\JwtBundle\Jwt\Exception;
 
-class InvalidTimeException extends \InvalidArgumentException {
+class InvalidTimeException extends \InvalidArgumentException
+{
 
 }

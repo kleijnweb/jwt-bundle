@@ -7,6 +7,7 @@
  */
 namespace KleijnWeb\JwtBundle\Jwt\Exception;
 
-class MissingClaimsException extends \InvalidArgumentException {
+class MissingClaimsException extends \InvalidArgumentException
+{
 
 }

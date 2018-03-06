@@ -67,9 +67,8 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 
         (new JwtAuthenticationListener($this->tokenStorageMock, $this->authenticationManagerMock))
             ->handle($this->createKernelEventWithRequest(
-                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', "Bearer $tokenString"))
-            );
-
+                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', "Bearer $tokenString")
+            ));
     }
 
     /**
@@ -89,8 +88,8 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 
         (new JwtAuthenticationListener($this->tokenStorageMock, $this->authenticationManagerMock))
             ->handle($this->createKernelEventWithRequest(
-                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', $tokenString))
-            );
+                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', $tokenString)
+            ));
     }
 
     /**
@@ -110,8 +109,8 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 
         (new JwtAuthenticationListener($this->tokenStorageMock, $this->authenticationManagerMock, 'X-Token'))
             ->handle($this->createKernelEventWithRequest(
-                $this->createRequestWithServerVar('HTTP_X_TOKEN', $tokenString))
-            );
+                $this->createRequestWithServerVar('HTTP_X_TOKEN', $tokenString)
+            ));
     }
 
     /**
@@ -125,8 +124,8 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 
         (new JwtAuthenticationListener($this->tokenStorageMock, $this->authenticationManagerMock, 'X-Token'))
             ->handle($this->createKernelEventWithRequest(
-                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', 'something'))
-            );
+                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', 'something')
+            ));
     }
 
     /**
@@ -144,7 +143,7 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
         $mock = $this->authenticationManagerMock;
         $mock->expects($this->once())
             ->method('authenticate')
-            ->willReturnCallback(function () use($authenticatedToken) {
+            ->willReturnCallback(function () use ($authenticatedToken) {
                 return $authenticatedToken;
             });
 
@@ -156,8 +155,8 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 
         (new JwtAuthenticationListener($this->tokenStorageMock, $this->authenticationManagerMock))
             ->handle($this->createKernelEventWithRequest(
-                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', 'something'))
-            );
+                $this->createRequestWithServerVar('HTTP_AUTHORIZATION', 'something')
+            ));
     }
 
     private function createRequestWithServerVar(string $name, string $value): Request
@@ -177,5 +176,4 @@ class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
 
         return $mock;
     }
-
 }

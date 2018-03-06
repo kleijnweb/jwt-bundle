@@ -32,7 +32,6 @@ class KleijnWebJwtExtension extends Extension
         $keys = [];
 
         foreach ($config['keys'] as $keyId => $keyConfig) {
-
             $keyConfig['kid'] = $keyId;
             $keyDefinition    = new Definition('jwt.keys.' . $keyId);
             $keyDefinition->setClass('KleijnWeb\JwtBundle\Jwt\JwtKey');
@@ -46,7 +45,6 @@ class KleijnWebJwtExtension extends Extension
 
         $container->getDefinition('jwt.security.authentication.provider')->addArgument($keys);
         $container->getDefinition('jwt.token_issuer')->addArgument($keys);
-
     }
 
     /**
