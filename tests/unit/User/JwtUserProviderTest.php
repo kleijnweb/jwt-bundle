@@ -8,14 +8,15 @@
 namespace KleijnWeb\JwtBundle\Tests\User;
 
 use KleijnWeb\JwtBundle\Jwt\JwtToken;
-use KleijnWeb\JwtBundle\User\JwtUserProvider;
 use KleijnWeb\JwtBundle\User\JwtUser;
+use KleijnWeb\JwtBundle\User\JwtUserProvider;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class JwtUserProviderTest extends \PHPUnit_Framework_TestCase
+class JwtUserProviderTest extends TestCase
 {
     /**
      * @var JwtUserProvider

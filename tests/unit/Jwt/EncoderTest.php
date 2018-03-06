@@ -8,11 +8,12 @@
 namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
 use KleijnWeb\JwtBundle\Jwt\Encoder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class EncoderTest extends \PHPUnit_Framework_TestCase
+class EncoderTest extends TestCase
 {
     /**
      * @param string $data

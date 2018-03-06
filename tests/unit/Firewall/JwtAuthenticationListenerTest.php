@@ -10,6 +10,7 @@ namespace KleijnWeb\JwtBundle\Tests\Firewall;
 use KleijnWeb\JwtBundle\Authentication\JwtAuthenticatedToken;
 use KleijnWeb\JwtBundle\Authentication\JwtAuthenticationToken;
 use KleijnWeb\JwtBundle\Firewall\JwtAuthenticationListener;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
@@ -19,7 +20,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class JwtAuthenticationListenerTest extends \PHPUnit_Framework_TestCase
+class JwtAuthenticationListenerTest extends TestCase
 {
     /**
      * @var AuthenticationManagerInterface

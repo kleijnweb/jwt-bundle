@@ -14,11 +14,12 @@ use KleijnWeb\JwtBundle\Jwt\JwtToken;
 use KleijnWeb\JwtBundle\Jwt\SecretLoader;
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\HmacValidator;
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\RsaValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class JwtKeyTest extends \PHPUnit_Framework_TestCase
+class JwtKeyTest extends TestCase
 {
     /**
      * @test

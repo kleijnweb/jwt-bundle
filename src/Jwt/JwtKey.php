@@ -91,7 +91,7 @@ class JwtKey
 
         $options                = array_merge($defaults, $options);
         $this->issuer           = $options['issuer'];
-        $this->audience         = $options['audience'];
+        $this->audience         = is_array($options['audience']) ? $options['audience'] : [$options['audience']];
         $this->type             = $options['type'];
         $this->minIssueTime     = $options['minIssueTime'];
         $this->requiredClaims   = $options['require'];

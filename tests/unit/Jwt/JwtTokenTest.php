@@ -9,11 +9,12 @@ namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
 use KleijnWeb\JwtBundle\Jwt\JwtToken;
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\SignatureValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class JwtTokenTest extends \PHPUnit_Framework_TestCase
+class JwtTokenTest extends TestCase
 {
     // @codingStandardsIgnoreStart
     const EXAMPLE_TOKEN = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ';

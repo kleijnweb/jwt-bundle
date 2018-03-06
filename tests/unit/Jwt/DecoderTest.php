@@ -8,11 +8,12 @@
 namespace KleijnWeb\JwtBundle\Tests\Jwt;
 
 use KleijnWeb\JwtBundle\Jwt\Decoder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class DecoderTest extends \PHPUnit_Framework_TestCase
+class DecoderTest extends TestCase
 {
     /**
      * @test

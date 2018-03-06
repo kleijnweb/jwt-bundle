@@ -14,6 +14,7 @@ use KleijnWeb\JwtBundle\Jwt\JwtKey;
 use KleijnWeb\JwtBundle\Jwt\JwtToken;
 use KleijnWeb\JwtBundle\User\JwtUserProvider;
 use KleijnWeb\JwtBundle\User\UnsafeGroupsUserInterface;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\AnonymousToken;
 use Symfony\Component\Security\Core\Authentication\Token\PreAuthenticatedToken;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
@@ -23,7 +24,7 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class JwtAuthenticationProviderTest extends \PHPUnit_Framework_TestCase
+class JwtAuthenticationProviderTest extends TestCase
 {
     const ISSUER = 'http://api.server1.com/oauth2/token';
     const SECRET = 'A Pre-Shared Key';

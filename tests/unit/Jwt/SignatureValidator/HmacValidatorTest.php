@@ -9,11 +9,12 @@
 namespace KleijnWeb\JwtBundle\Tests\Jwt\SignatureValidator;
 
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\HmacValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class HmacValidatorTest extends \PHPUnit_Framework_TestCase
+class HmacValidatorTest extends TestCase
 {
     /**
      * @var string

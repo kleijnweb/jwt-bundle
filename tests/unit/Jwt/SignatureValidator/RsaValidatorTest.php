@@ -9,11 +9,12 @@
 namespace KleijnWeb\JwtBundle\Tests\Jwt\SignatureValidator;
 
 use KleijnWeb\JwtBundle\Jwt\SignatureValidator\RsaValidator;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
  */
-class RsaValidatorTest extends \PHPUnit_Framework_TestCase
+class RsaValidatorTest extends TestCase
 {
     /**
      * @var string
@@ -27,6 +28,7 @@ VvJ+qiNgmXXssgCl5vHs22y/RIgeOnDhkj81aB9Evx9iR7DOtyRBxnovrbN5gDwX
 m6IDw3fRhZQrVwZ816/eN+1sqpIMZF4oo4kRA4b64U04ex67A/6BwDDQ3LH0mD4d
 EwIDAQAB
 -----END PUBLIC KEY-----';
+
     /**
      * @var string
      */
@@ -81,21 +83,21 @@ gen9FW5mEhj257ZHej/AQrJWFo7YVooBL7ShwU0WaReeQkncxAsY
     {
         // SHA256
 
-        $payload1 = 'some payload';
+        $payload1   = 'some payload';
         $signature1 = '';
         openssl_sign($payload1, $signature1, self::$privKey, RsaValidator::SHA256);
 
-        $payload2 = 'some other payload';
+        $payload2   = 'some other payload';
         $signature2 = '';
         openssl_sign($payload2, $signature2, self::$privKey, RsaValidator::SHA256);
 
         // SHA512
 
-        $payload3 = 'some payload';
+        $payload3   = 'some payload';
         $signature3 = '';
         openssl_sign($payload3, $signature3, self::$privKey, RsaValidator::SHA512);
 
-        $payload4 = 'some other payload';
+        $payload4   = 'some other payload';
         $signature4 = '';
         openssl_sign($payload4, $signature4, self::$privKey, RsaValidator::SHA512);
 
