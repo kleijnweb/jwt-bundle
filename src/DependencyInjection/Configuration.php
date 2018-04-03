@@ -38,6 +38,11 @@ class Configuration implements ConfigurationInterface
                             ->arrayNode('audience')
                                 ->prototype('scalar')->end()
                             ->end()
+                            ->scalarNode('minIssueTime')->end()
+                            ->arrayNode('require')
+                                ->prototype('scalar')->end()
+                            ->end()
+                            ->scalarNode('leeway')->end()
                         ->end()
                     ->end()
                 ->end()
@@ -46,3 +51,4 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 }
+

@@ -8,6 +8,7 @@
 
 namespace KleijnWeb\JwtBundle\DependencyInjection;
 
+use KleijnWeb\JwtBundle\Jwt\JwtKey;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -34,7 +35,7 @@ class KleijnWebJwtExtension extends Extension
         foreach ($config['keys'] as $keyId => $keyConfig) {
             $keyConfig['kid'] = $keyId;
             $keyDefinition    = new Definition('jwt.keys.' . $keyId);
-            $keyDefinition->setClass('KleijnWeb\JwtBundle\Jwt\JwtKey');
+            $keyDefinition->setClass(JwtKey::class);
 
             if (isset($keyConfig['loader'])) {
                 $keyConfig['loader'] = new Reference($keyConfig['loader']);
