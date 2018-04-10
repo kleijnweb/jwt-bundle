@@ -15,6 +15,10 @@ matrix:
         - mkdir -p build/logs
       after_script:
         - travis_retry php bin/coveralls -v
+        - |
+          curl --silent https://github.com/kleijnweb/jwt-bundle |\
+            grep -oP 'https://camo.githubusercontent.com/[0-9a-z]+/[0-9a-z]+' |\
+            xargs curl -X PURGE
     - php: 7.2
       script: bin/phpunit
     - php: 7.2
