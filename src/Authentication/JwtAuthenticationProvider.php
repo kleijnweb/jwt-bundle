@@ -82,7 +82,7 @@ class JwtAuthenticationProvider implements AuthenticationProviderInterface
             $key      = $this->getKeyById($jwtToken->getKeyId());
             $key->validateToken($jwtToken);
         } catch (\Exception $e) {
-            throw new BadCredentialsException('Invalid JWT token', 0, $e);
+            throw new BadCredentialsException('Invalid JWT token: '.$e->getMessage(), 0);
         }
 
         $username = $jwtToken->getSubject();
