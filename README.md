@@ -4,22 +4,19 @@
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/kleijnweb/jwt-bundle/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/kleijnweb/jwt-bundle/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/kleijnweb/jwt-bundle/v/stable)](https://packagist.org/packages/kleijnweb/jwt-bundle)
 
-Integrate OAuth 2.0 compatible JWT API tokens for authentication.
+Integrate JWT API tokens for authentication.
 
 Go to the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to find details about the latest release.
 
 For an example see [swagger-bundle-example](https://github.com/kleijnweb/swagger-bundle-example).
 
-*NOTE:* JwtBundle is compatible with PHP 5.4 and does not work with Symfony 3.0 (yet).   
+*NOTE:* Looking for PHP <7.0 and Symfony <2.8.7 support? Use a 0.x version.   
 
-## Install And Configure
+## Install
 
 Install using composer (`composer require kleijnweb/jwt-bundle`). You want to check out the [release page](https://github.com/kleijnweb/jwt-bundle/releases) to ensure you are getting what you want and optionally verify your download.
 
 ## Authentication
-
-JwtBundle comes with a `Authenticator` which implements a OAuth 2 compatible token-based authentication method. 
-The role of the server with JwtBundle in OAuth terms is "Resource Server" (ie your app has some resources belonging to the "Resource Owner" that a client program wants access to). 
 
 The token is validated using standard (reserved) JWT claims:
 
@@ -43,7 +40,7 @@ All other claims encountered are ignored. The JWT header is checked for `kid` (s
 
 ### Keys
 
-`Authenticator` supports multiple keys, and allows all options to be configured per `kid` (key ID, which must be included in the JWT header when more than 1 key is configured):
+The authenticator supports multiple keys, and allows all options to be configured per `kid` (key ID, which must be included in the JWT header when more than 1 key is configured):
 
 ```yml
 jwt: 
@@ -55,15 +52,6 @@ jwt:
         require: [nbf, exp, my-claim] # Mark claims as required
         leeway: 5 # Allow 5 seconds of time de-synchronization (both ways) between this server and api.server.com
 ```
-
-Clients should pass the token using an `Authentication: Bearer` header, eg:
-
-```
-Authentication: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
-```
-
-While this is compatible with OAuth 2.0, use of such a protocol is outside of the scope of JwtBundle and entirely optional. For more information on using JWT Bearer tokens in OAuth, refer to [this spec](http://tools.ietf.org/html/draft-ietf-oauth-jwt-bearer-07).
-
 JwtBundle and the issuer must share a secret in order for JwtBundle to be able to verify tokens. You can choose between a *pre shared key* (PSK) or *asymmetric keys*. 
 
 ```yml
@@ -137,43 +125,53 @@ class SimpleSecretLoader implements SecretLoader
 }
 ```
 
-You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`. Be sure to throw an `AuthenticationException` when appropriate (eg missing claims needed for loading secret). 
+You could use any information available in the token, such as the `kid`, `alg` or any custom claims. You cannot configure both `secret` and `loader`. Be sure to throw an `AuthenticationException` when appropriate (eg missing claims needed for loading secret).
 
 ### Integration Into Symfony Security
 
-When enabled, `Authenticator` will be used for any operations referencing a `SecurityDefinition` of type `apiKey` or `oath2`. You will need a *user provider*, which will be passed the
- `sub` value when invoking `loadUserByUsername`. Trivial example using 'in memory':
- 
+Synopsis:
+
 ```yml
 security:
-    firewalls:
-        secured_area:
-            pattern: ^/
-            stateless: true
-            simple_preauth:
-                authenticator: jwt.authenticator
-            provider: in_memory
+  firewalls:
+    default:
+      stateless: true
+      jwt:
+        header: X-Header-Name # Defaults to "Authorization", in which case encountered "Bearer" prefixes are stripped
+        provider: jwt
 
-    providers:
-        in_memory:
-            memory:
-                users:
-                    joe:
-                        roles: 'IS_AUTHENTICATED_FULLY'
+  providers:
+    jwt:
+      id: jwt.user_provider
 ```
 
-In some cases, you don't actually want to "load users" and just use the username. In this case, create a simple `UserProvider` that just creates a user object without fetching from any external source.
+Using the bundled user provider is optional. This will produce user objects from the token data alone with roles produced from the `aud` claim (and `IS_AUTHENTICATED_FULLY` whether `aud` was set or not).
+
+### Assigning audience to user roles using an alternate UserProvider
+
+JwtBundle can assign the audience claims in the JwtToken to the User objects user roles properties. Ideally, this is done in the UserProvider, so that the groups cannot be modified.
+
+If this is an acceptable risk, you do not want to use JwtUser/JwtUserProvider, but *do* want JwtBundle to copy `aud` claims to user roles, you can have your User class implement the `KleijnWeb\JwtBundle\User\UnsafeGroupsUserInterface` interface, and JwtBundle will add the roles *after* the user is loaded from the provider.
+This behavior may be removed in future versions.
+
+_NOTE:_ This function *only* copies the the roles from the token.
+
+### Issuing Token
+
+Issuing tokens is currently limited to `HS256`. To create a token string:
 
 ```php
-class PreAuthenticatedUserProvider implements UserProviderInterface
-{
-    public function loadUserByUsername($username)
-    {
-       return new MyPreAuthenticatedUserClass($username);
-    }
+$token = new JwtToken([
+    'header' => [
+        'alg' => 'HS256',
+        'typ' => 'JWT',
+        'kid' => 'Optional Key ID'
+    ],
+    'claims' => [ /*  Array of claims */ ],
+    'secret' => 'Your Secret'
+]);
 
-    //....
-}
+$token->getTokenString();
 ```
 
 ## License

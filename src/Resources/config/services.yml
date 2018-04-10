@@ -1,4 +1,19 @@
 services:
-  jwt.authenticator:
-      class:  KleijnWeb\JwtBundle\Authenticator\Authenticator
+  jwt.user_provider:
+      class:  KleijnWeb\JwtBundle\User\JwtUserProvider
       public: false
+
+  jwt.token_issuer:
+      class:  KleijnWeb\JwtBundle\Jwt\TokenIssuer
+      public: true
+
+  jwt.security.authentication.provider:
+    class: KleijnWeb\JwtBundle\Authentication\JwtAuthenticationProvider
+    arguments:
+        - '' # User Provider
+    public: false
+
+  jwt.security.authentication.listener:
+    class: KleijnWeb\JwtBundle\Firewall\JwtAuthenticationListener
+    arguments: ['@security.token_storage', '@security.authentication.manager']
+    public: false

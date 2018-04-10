@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -8,12 +8,13 @@
 
 namespace KleijnWeb\JwtBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use KleijnWeb\JwtBundle\Jwt\JwtKey;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
  * @author John Kleijn <john@kleijnweb.nl>
@@ -32,10 +33,9 @@ class KleijnWebJwtExtension extends Extension
         $keys = [];
 
         foreach ($config['keys'] as $keyId => $keyConfig) {
-
             $keyConfig['kid'] = $keyId;
             $keyDefinition    = new Definition('jwt.keys.' . $keyId);
-            $keyDefinition->setClass('KleijnWeb\JwtBundle\Authenticator\JwtKey');
+            $keyDefinition->setClass(JwtKey::class);
 
             if (isset($keyConfig['loader'])) {
                 $keyConfig['loader'] = new Reference($keyConfig['loader']);
@@ -44,8 +44,8 @@ class KleijnWebJwtExtension extends Extension
             $keys[] = $keyDefinition;
         }
 
-        $container->getDefinition('jwt.authenticator')->addArgument($keys);
-
+        $container->getDefinition('jwt.security.authentication.provider')->addArgument($keys);
+        $container->getDefinition('jwt.token_issuer')->addArgument($keys);
     }
 
     /**

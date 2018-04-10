@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types = 1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -8,7 +8,10 @@
 
 namespace KleijnWeb\JwtBundle;
 
+use KleijnWeb\JwtBundle\DependencyInjection\JwtAuthenticationFactory;
 use KleijnWeb\JwtBundle\DependencyInjection\KleijnWebJwtExtension;
+use Symfony\Bundle\SecurityBundle\DependencyInjection\SecurityExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\ExtensionInterface;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -17,6 +20,17 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class KleijnWebJwtBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        parent::build($container);
+
+        if ($container->hasExtension('security')) {
+            /** @var SecurityExtension $extension */
+            $extension = $container->getExtension('security');
+            $extension->addSecurityListenerFactory(new JwtAuthenticationFactory());
+        }
+    }
+
     /**
      * @return string The Bundle namespace
      */
