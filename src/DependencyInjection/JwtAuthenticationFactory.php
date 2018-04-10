@@ -1,4 +1,4 @@
-<?php declare(strict_types = 1);
+<?php declare(strict_types=1);
 /*
  * This file is part of the KleijnWeb\JwtBundle package.
  *
@@ -10,8 +10,9 @@ namespace KleijnWeb\JwtBundle\DependencyInjection;
 
 use Symfony\Bundle\SecurityBundle\DependencyInjection\Security\Factory\SecurityFactoryInterface;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ChildDefinition;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -39,13 +40,18 @@ class JwtAuthenticationFactory implements SecurityFactoryInterface
 
     public function create(ContainerBuilder $container, $id, $config, $userProvider, $defaultEntryPoint)
     {
-        $providerId = 'security.authentication.provider.jwt.' . $id;
+        // Cross compat, it ugly.
+        $childDefinitionClass = class_exists(ChildDefinition::class)
+            ? ChildDefinition::class
+            : DefinitionDecorator::class;
+
+        $providerId           = 'security.authentication.provider.jwt.' . $id;
         $container
-            ->setDefinition($providerId, new DefinitionDecorator('jwt.security.authentication.provider'))
+            ->setDefinition($providerId, new $childDefinitionClass('jwt.security.authentication.provider'))
             ->replaceArgument(0, new Reference($userProvider));
 
         $listenerId = 'security.authentication.listener.jwt.' . $id;
-        $container->setDefinition($listenerId, new DefinitionDecorator('jwt.security.authentication.listener'));
+        $container->setDefinition($listenerId, new $childDefinitionClass('jwt.security.authentication.listener'));
 
         return [$providerId, $listenerId, $defaultEntryPoint];
     }

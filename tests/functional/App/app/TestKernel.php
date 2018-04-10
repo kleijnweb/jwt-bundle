@@ -1,9 +1,9 @@
-<?php
-//@codingStandardsIgnoreStart
+<?php declare(strict_types=1);
+
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\HttpKernel\Kernel;
 
-
+//@codingStandardsIgnoreStart
 class TestKernel extends Kernel
 {
 //@codingStandardsIgnoreEnd
