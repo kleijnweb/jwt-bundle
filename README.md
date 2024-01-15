@@ -1,3 +1,5 @@
+# This project is no longer maintained
+
 # KleijnWeb\JwtBundle 
 [![Build Status](https://travis-ci.org/kleijnweb/jwt-bundle.svg?branch=master)](https://travis-ci.org/kleijnweb/jwt-bundle)
 [![Coverage Status](https://coveralls.io/repos/github/kleijnweb/jwt-bundle/badge.svg?branch=master)](https://coveralls.io/github/kleijnweb/jwt-bundle?branch=master)
